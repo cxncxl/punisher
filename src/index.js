@@ -162,6 +162,10 @@ function handleInlineKeyboard(query) {
             ban(payload.original_message);
             break;
     }
+
+    bot.answerCallbackQuery({
+        callback_query_id: query.id,
+    });
 }
 
 /**
