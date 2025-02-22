@@ -194,6 +194,8 @@ function handleMyChatMember(message) {
  * @returns {void}
  */
 function handlePromote(message, match) {
+    console.log('prom', message);
+
     if (!message.reply_to_message) return;
 
     const chat = chats.find(c => c.id === message.chat.id);
