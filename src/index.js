@@ -124,6 +124,11 @@ function handleTgPrivateMessage(message) {
     // with this we're ignoring channels and superchats
     if (message.chat.type != 'private') return;
 
+    if (message.text && message.text.includes('ping'))
+        bot.sendMessage(
+            message.chat.id,
+            'pong',
+        );
 }
 
 /**
