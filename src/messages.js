@@ -33,6 +33,10 @@ export function punish() {
     return 'Punish';
 }
 
+export function falsePositive() {
+    return 'Not a spam';
+}
+
 export function actionSuccess() {
     return '+';
 }

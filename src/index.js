@@ -145,7 +145,10 @@ function handleInlineKeyboard(query) {
 
     switch (payload.action) {
         case 'punish':
-            punish(payload.original_message);
+            punish(payload.original_message, true);
+            break;
+        case 'falsePositive':
+            falsePositive(payload.original_message);
             break;
     }
 }
@@ -237,7 +240,7 @@ function handleReport(message, match) {
     if (!message.reply_to_message.from.id) return;
 
     const intMessage = buildMessage(message.reply_to_message);
-    punish(intMessage);
+    punish(intMessage, true);
 }
 
 /**
@@ -313,7 +316,7 @@ function judge(message) {
         return;
     }
 
-    punish(message);
+    punish(message, false);
 }
 
 /**
@@ -342,6 +345,10 @@ function notifyAdminsAboutPossibleSpam(message) {
                             text: messages.punish(),
                             callback_data: `punish;${messagesBuf.length - 1}`,
                         },
+                        {
+                            text: messages.falsePositive(),
+                            callback_data: `falsePositive;${messagesBuf.length - 1}`,
+                        },
                     ]],
                 },
             }
@@ -353,10 +360,15 @@ function notifyAdminsAboutPossibleSpam(message) {
  * Punish spammer
  *
  * @param {Message} message
+ * @param {boolean} report - if to report message as good finding
  * @returns {void}
  */
-function punish(message) {
+function punish(message, report) {
     if (!message.senderId) return;
+
+    if (report) {
+        geminiChat.sendMessage(prompts.goodFinding(message.text));
+    }
 
     const chat = chats.find(c => c.id === message.chatId);
     if (!chat) return;
@@ -380,6 +392,16 @@ function punish(message) {
             messages.punished(message),
         );
     }
+}
+
+/**
+ * Let LLM know that it found false positive
+ *
+ * @param {Message} message
+ * @returns {void}
+ */
+function falsePositive(message) {
+    geminiChat.sendMessage(prompts.falsePositive(message.text));
 }
 
 function exit() {

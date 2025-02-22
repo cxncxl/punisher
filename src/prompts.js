@@ -68,3 +68,34 @@ export const analyzePrompt = `
     Message's text:
 
 `;
+
+/**
+ * Let LLM know that that was good finding, actual spam
+ *
+ * @param {string} message - message text
+ * @returns {string}
+ */
+export function goodFinding(message) {
+    return `This is good example of spam. Please remember to ban such messages
+    in the future. You can be sure that message similar to this one is spam
+
+    Message:
+
+    `;
+}
+
+/**
+ * Let LLM know that message was marked as spam by mistake
+ *
+ * @param {string} message - message text
+ * @returns {string}
+ */
+export function falsePositive(message) {
+    return `You marked this message as spam, but it is not. This is regular message,
+    everything is fine. Next time you see one similar to this, be less confident
+    in it's rookiness
+
+    Message:
+
+    `;
+}
