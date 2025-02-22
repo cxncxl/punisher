@@ -103,7 +103,10 @@ function handleNewTgChatMember(message) {}
  * @returns {Promise<void>}
  */
 async function handleTgChatMessage(message) {
-    if (message.chat.type != 'group') handleTgPrivateMessage(message);
+    if (
+        message.chat.type != 'group'
+        && message.chat.type != 'supergroup'
+    ) handleTgPrivateMessage(message);
     if (!chats.some(c => c.id === message.chat.id)) return; // Unknown chat
 
     const intMessage = buildMessage(message);
