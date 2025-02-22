@@ -85,7 +85,7 @@ bot.on('new_chat_members', handleNewTgChatMember);
 bot.on('text', handleTgChatMessage);
 bot.on('callback_query', handleInlineKeyboard);
 bot.on('my_chat_member', handleMyChatMember);
-bot.onText(/\!admin/, handlePromote);
+bot.onText(/\!prom/, handlePromote);
 bot.onText(/\!spam/, handleReport);
 
 /**
