@@ -175,7 +175,10 @@ function handleMyChatMember(message) {
 
     if (
         message.new_chat_member.user.id === selfId
-        && message.new_chat_member.status === 'member'
+        && (
+            message.new_chat_member.status === 'member'
+            || message.new_chat_member.status === 'administrator'
+        )
     ) {
         const oldChat = chats.find(c => c.id === message.chat.id);
         if (oldChat) chats = chats.filter(c => c.id != oldChat.id);
