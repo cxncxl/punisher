@@ -7,9 +7,9 @@
 export function possibleSpam(message) {
     return `Possible spam message: 
 
-        *${message.senderName}* [${message.at.toLocaleString()}]:
- 
-        ${message.text}
+    *${message.senderName}* [${message.at.toLocaleString()}]:
+
+    ${message.text}
     `;
 }
 
@@ -20,12 +20,27 @@ export function possibleSpam(message) {
  * @returns {string}
  */
 export function punished(message) {
-    return `Deleted message and banned sender:
+    return `Deleted message:
+
+    *${message.senderName}* [${message.at.toLocaleString()}]:
+
+    ${message.text}
+    `;
+}
+
+/**
+ * Punished spammer message and deleted user
+ *
+ * @param {import('./index.js').Message} message
+ * @returns {string}
+ */
+export function punishedAndBanned(message) {
+    return `Deleted message and banned spammer:
 
 
-        *${message.senderName}* [${message.at.toLocaleString()}]:
- 
-        ${message.text}
+    *${message.senderName}* [${message.at.toLocaleString()}]:
+
+    ${message.text}
     `;
 }
 
@@ -39,4 +54,8 @@ export function falsePositive() {
 
 export function actionSuccess() {
     return '+';
+}
+
+export function ban() {
+    return 'Ban user';
 }

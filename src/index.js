@@ -155,6 +155,9 @@ function handleInlineKeyboard(query) {
         case 'falsePositive':
             falsePositive(payload.original_message);
             break;
+        case 'ban':
+            ban(payload.original_message);
+            break;
     }
 }
 
@@ -386,15 +389,55 @@ function punish(message, report) {
         message.id,
     );
 
-    bot.banChatMember(
-        message.chatId,
-        message.senderId,
-    );
+    // bot.banChatMember(
+    //     message.chatId,
+    //     message.senderId,
+    // );
+    
+    messagesBuf.push(message);
 
     for (const admin of admins) {
         bot.sendMessage(
             admin,
             messages.punished(message),
+            {
+                reply_markup: {
+                    inline_keyboard: [[
+                        {
+                            text: messages.ban(),
+                            callback_data: `ban;${messagesBuf.length - 1}`,
+                        },
+                    ]],
+                },
+            },
+        );
+    }
+}
+
+/**
+ * Ban sender
+ *
+ * @param {Message} message
+ * @returns {void}
+ */
+function ban(message) {
+    if (!message.senderId) return;
+
+    bot.banChatMember(
+        message.chatId,
+        message.senderId,
+    );
+
+    const chat = chats.find(c => c.id === message.chatId);
+    if (!chat) return;
+
+    const admins = chat.admins;
+    if (!admins || admins.length === 0) return;
+
+    for (const admin of admins) {
+        bot.sendMessage(
+            admin,
+            messages.punishedAndBanned(message),
         );
     }
 }
