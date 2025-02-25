@@ -163,6 +163,13 @@ function handleInlineKeyboard(query) {
             break;
     }
 
+    bot.editMessageReplyMarkup({
+        inline_keyboard: [],
+    }, {
+        chat_id: query.from.id,
+        message_id: query.message?.message_id,
+    });
+
     bot.answerCallbackQuery({
         callback_query_id: query.id,
     });
