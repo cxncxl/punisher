@@ -42,6 +42,34 @@ export const systemPrompt = `
     '/start',
     '/draw',
     etc
+
+    Here are some examples of what suspicious messages look like:
+    
+    "ИЩY БЫBШИX И HЫHЕШHИX PAБOTHИKOB OФИCOB. OTПИШИTE, ECTЬ ПPEДЛOЖEHИЕ!"
+
+    "Работа + жилье пиши мне"
+
+    "быстрые деньги, работа, работа, офис, подработка"
+
+    "😚😌😚😌🤓😋
+    🧩🧩🧩🅰️🅱️🔤🔡🔚
+    Нужен PRIVAT24🏦💰
+    Нужен PUMB💳💰
+    За связку платим 100💸
+    ❌НЕ СКАМ❌
+    ❌НЕ ОФИС❌
+    КРИПТООБМЕННИК 📱📱📱
+    ✅Приведи друга 1000 грн
+    😄 @P2P_meneger"
+
+    "Дeньги любят пoрядoк – ecли ты oтвeтcтвeнный, знaчит, тeбe к нaм! Выплaты кaждую нeдeлю, прeмии (9000-10000 грн). Вce вoпрocы – в Лc!"
+
+    but there can be other. general idea: job offers, "quick money", crypto, nft,
+    and so on.
+
+    On other hand, if message contains slur or something like that it is not
+    necessary spam. You should also understand if person is joking. Your task is
+    hard, but very responsible and important for keeping internet clean and safe
 `;
 
 /**
