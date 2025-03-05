@@ -338,7 +338,7 @@ function judge(message) {
 
     if (!message.aiConfidence) message.aiConfidence = 0;
 
-    if (message.aiConfidence < 1) {
+    if (message.aiConfidence < 0.75) {
         notifyAdminsAboutPossibleSpam(message);
         return;
     }
