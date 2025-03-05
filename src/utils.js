@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, appendFileSync } from 'fs';
 
 import TelegramBot from 'node-telegram-bot-api';
 
@@ -39,4 +39,22 @@ export function importChats() {
     if (chatsJson.length === 0) chatsJson = '{}';
 
     return JSON.parse(chatsJson);
+}
+
+/**
+ * Append message that is 100% spam to spam library
+ *
+ * @param {string} message
+ */
+export function appendSpamHistory(message) {
+    appendFileSync('spam.txt', `\n${message}`);
+}
+
+/**
+ * Read saved spam messages
+ *
+ * @returns {string}
+ */
+export function loadSpamHistory() {
+    return readFileSync('spam.txt').toString();
 }

@@ -42,7 +42,9 @@ const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? '')
                 threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
             },
         ],
-        systemInstruction: prompts.systemPrompt,
+        systemInstruction: prompts.systemPrompt
+            + `here are also other spam messages examples: \n\n`
+            + utils.loadSpamHistory(),
     });
 
 /**
@@ -431,6 +433,8 @@ function punish(message, report) {
             },
         );
     }
+
+    utils.appendSpamHistory(message.text);
 }
 
 /**
