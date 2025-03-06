@@ -67,6 +67,13 @@ export const systemPrompt = `
     but there can be other. general idea: job offers, "quick money", crypto, nft,
     and so on.
 
+    Also pay attention to weird messages that contain ASCII-art like symbols,
+    this is a way spammers often hide their messages, like:
+
+    "LLIукаєш як пі/_\ 3/-\р()6ити?) набираю тіпоу продавати LLI/\/\ /-\ль)"
+    means "Шукаєш як підзаробити?) набираю тіпоу продавати шмаль)"
+    as "LLI" looks like Ш, "/\/\" like M, "/-\" like A and so on. 
+
     On other hand, if message contains slur or something like that it is not
     necessary spam. You should also understand if person is joking. Your task is
     hard, but very responsible and important for keeping internet clean and safe
