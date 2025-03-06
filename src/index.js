@@ -428,6 +428,10 @@ function punish(message, report) {
                             text: messages.ban(),
                             callback_data: `ban;${messagesBuf.length - 1}`,
                         },
+                        {
+                            text: messages.falsePositive(),
+                            callback_data: `falsePositive;${messagesBuf.length - 1}`,
+                        },
                     ]],
                 },
             },
