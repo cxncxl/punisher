@@ -155,7 +155,7 @@ function handleInlineKeyboard(query) {
 
     switch (payload.action) {
         case 'punish':
-            punish(payload.original_message, true);
+            punish(payload.original_message, true, false);
             break;
         case 'falsePositive':
             falsePositive(payload.original_message);
@@ -269,7 +269,7 @@ function handleReport(message, match) {
     if (!message.reply_to_message.from.id) return;
 
     const intMessage = buildMessage(message.reply_to_message);
-    punish(intMessage, true);
+    punish(intMessage, true, false);
 }
 
 /**
@@ -343,9 +343,11 @@ function judge(message) {
     if (message.aiConfidence < 0.75) {
         notifyAdminsAboutPossibleSpam(message);
         return;
-    }
+    } 
 
-    punish(message, false);
+    const ban = message.aiConfidence === 1;
+
+    punish(message, false, ban);
 }
 
 /**
@@ -390,9 +392,10 @@ function notifyAdminsAboutPossibleSpam(message) {
  *
  * @param {Message} message
  * @param {boolean} report - if to report message as good finding
+ * @param {boolean} ban - if to ban the sender
  * @returns {void}
  */
-function punish(message, report) {
+function punish(message, report, ban) {
     if (!message.senderId) return;
 
     if (report) {
@@ -410,10 +413,12 @@ function punish(message, report) {
         message.id,
     );
 
-    // bot.banChatMember(
-    //     message.chatId,
-    //     message.senderId,
-    // );
+    if (ban === true) {
+        bot.banChatMember(
+            message.chatId,
+            message.senderId,
+        );
+    }
     
     messagesBuf.push(message);
 
