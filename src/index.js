@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import * as prompts from './prompts.js';
 import * as utils from './utils.js';
 import * as messages from './messages.js';
+import { Chat } from './database.js';
 
 dotenv.config();
 
@@ -55,13 +56,6 @@ const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? '')
 const geminiChat = gemini.startChat();
 
 /**
- * Chat model
- * @typedef {Object} Chat
- * @property {number} id - chat id
- * @property {number[]} admins - List of user ids of people who are admins of the chat
- */
-
-/**
  * App message model
  * @typedef {Object} Message
  * @property {number} id - message id
@@ -80,7 +74,7 @@ const geminiChat = gemini.startChat();
  * @type {Chat[]}
  * @global
  */
-let chats = utils.importChats();
+let chats = await utils.importChats();
 console.log(chats);
 
 bot.on('new_chat_members', handleNewTgChatMember);
@@ -198,9 +192,13 @@ function handleMyChatMember(message) {
 
         chats.push({
             id: message.chat.id,
-            admins: [
+            adminsIds: [
                 message.from.id,
             ],
+            hasPremium: false,
+            deletedMessages: 0,
+            processedMessages: 0,
+            bannedSpammers: 0,
         });
     }
 }
@@ -220,7 +218,7 @@ function handlePromote(message, match) {
     const chat = chats.find(c => c.id === message.chat.id);
     if (!chat) return;
 
-    const admins = chat.admins;
+    const admins = chat.adminsIds;
     if (!admins || admins.length === 0) return;
 
     if (!message.from) return;
@@ -229,11 +227,13 @@ function handlePromote(message, match) {
     if (!message.reply_to_message.from) return;
     if (!message.reply_to_message.from.id) return;
 
-    chat.admins.push(message.reply_to_message.from.id);
+    chat.adminsIds.push(message.reply_to_message.from.id);
     chats = [
         ...chats.filter(c => c.id != chat.id),
         chat,
     ];
+
+    utils.exportChats(chats);
 
     console.log(chats);
 
@@ -259,7 +259,7 @@ function handleReport(message, match) {
     const chat = chats.find(c => c.id === message.chat.id);
     if (!chat) return;
 
-    const admins = chat.admins;
+    const admins = chat.adminsIds;
     if (!admins || admins.length === 0) return;
 
     if (!message.from) return;
@@ -359,7 +359,7 @@ function notifyAdminsAboutPossibleSpam(message) {
     const chat = chats.find(c => c.id === message.chatId);
     if (!chat) return;
 
-    const admins = chat.admins;
+    const admins = chat.adminsIds;
     if (!admins || admins.length === 0) return;
 
     console.log('notifyPossibleSpam', message);
@@ -405,19 +405,21 @@ function punish(message, report, ban) {
     const chat = chats.find(c => c.id === message.chatId);
     if (!chat) return;
 
-    const admins = chat.admins;
+    const admins = chat.adminsIds;
     if (!admins || admins.length === 0) return;
 
     bot.deleteMessage(
         message.chatId,
         message.id,
     );
+    chat.deletedMessages++;
 
     if (ban === true) {
         bot.banChatMember(
             message.chatId,
             message.senderId,
         );
+        chat.bannedSpammers++;
     }
     
     messagesBuf.push(message);
@@ -439,11 +441,13 @@ function punish(message, report, ban) {
                         },
                     ]],
                 },
+                parse_mode: 'MarkdownV2',
             },
         );
     }
 
     utils.appendSpamHistory(message.text);
+    utils.exportChats(chats);
 }
 
 /**
@@ -463,7 +467,7 @@ function ban(message) {
     const chat = chats.find(c => c.id === message.chatId);
     if (!chat) return;
 
-    const admins = chat.admins;
+    const admins = chat.adminsIds;
     if (!admins || admins.length === 0) return;
 
     for (const admin of admins) {

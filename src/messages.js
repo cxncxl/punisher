@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 /**
  * Possible spam message text
  *
@@ -5,12 +7,13 @@
  * @returns {string}
  */
 export function possibleSpam(message) {
-    return `Possible spam message: 
+    return `**Possible spam message:** 
 
-    *${message.senderName}* [${message.at.toLocaleString()}]:
+[${message.senderName}](tg://${message.senderId})
+[${moment(message.at).format('YYYY MM dd HH:mm:ss')}]
 
-    ${message.text}
-    `;
+>> ${message.text}
+`;
 }
 
 /**
@@ -20,12 +23,13 @@ export function possibleSpam(message) {
  * @returns {string}
  */
 export function punished(message) {
-    return `Deleted message:
+    return `**Deleted message:**
 
-    *${message.senderName}* [${message.at.toLocaleString()}]:
+[${message.senderName}](tg://${message.senderId})
+[${moment(message.at).format('YYYY MM dd HH:mm:ss')}]
 
-    ${message.text}
-    `;
+>> ${message.text}
+`;
 }
 
 /**
@@ -35,13 +39,13 @@ export function punished(message) {
  * @returns {string}
  */
 export function punishedAndBanned(message) {
-    return `Deleted message and banned spammer:
+    return `**Deleted message and banned spammer:**
 
+[${message.senderName}](tg://${message.senderId})
+[${moment(message.at).format('YYYY MM dd HH:mm:ss')}]
 
-    *${message.senderName}* [${message.at.toLocaleString()}]:
-
-    ${message.text}
-    `;
+>> ${message.text}
+`;
 }
 
 export function punish() {

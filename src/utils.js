@@ -1,6 +1,7 @@
-import { readFileSync, writeFileSync, appendFileSync } from 'fs';
+import { readFileSync, appendFileSync } from 'fs';
 
 import TelegramBot from 'node-telegram-bot-api';
+import { Chat, createChat, getChats } from './database';
 
 /**
  * Log an error / send notification to admin
@@ -10,7 +11,7 @@ import TelegramBot from 'node-telegram-bot-api';
  */
 export function log(bot, message) {
     bot.sendMessage(
-        process.env.APP_ADMIN_TG_ID,
+        process.env.APP_ADMIN_TG_ID ?? '',
         message,
     );
 }
@@ -18,27 +19,21 @@ export function log(bot, message) {
 /**
  * Save chats data in a file
  *
- * @param {Object} chats
+ * @param {Chat[]} chats
  * @returns {void}
  */
 export function exportChats(chats) {
     console.log('export chats');
-    writeFileSync(
-        './chats.json',
-        JSON.stringify(chats),
-    );
+    chats.forEach(createChat);
 }
 
 /**
- * Import chats data from file
+ * Import chats data from db
  *
- * @returns {Object}
+ * @returns {Promise<Chat[]>}
  */
 export function importChats() {
-    let chatsJson = readFileSync('./chats.json').toString('utf8');
-    if (chatsJson.length === 0) chatsJson = '{}';
-
-    return JSON.parse(chatsJson);
+    return getChats();
 }
 
 /**
