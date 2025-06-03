@@ -7,10 +7,12 @@ import moment from 'moment'
  * @returns {string}
  */
 export function possibleSpam(message) {
+    message.text = message.text.replace(/([\\`*_{}[\]()#+\-!.|>~])/g, '\\$1');
+
     return `**Possible spam message:** 
 
-[${message.senderName}](tg://${message.senderId})
-[${moment(message.at).format('YYYY MM dd HH:mm:ss')}]
+[${message.senderName}](tg://user?id=${message.senderId})
+[${moment(message.at).format('YYYY/MM/DD HH:mm:ss')}]
 
 >> ${message.text}
 `;
@@ -23,10 +25,12 @@ export function possibleSpam(message) {
  * @returns {string}
  */
 export function punished(message) {
+    message.text = message.text.replace(/([\\`*_{}[\]()#+\-!.|>~])/g, '\\$1');
+
     return `**Deleted message:**
 
-[${message.senderName}](tg://${message.senderId})
-[${moment(message.at).format('YYYY MM dd HH:mm:ss')}]
+[${message.senderName}](tg://user?id=${message.senderId})
+[${moment(message.at).format('YYYY/MM/DD HH:mm:ss')}]
 
 >> ${message.text}
 `;
@@ -39,10 +43,12 @@ export function punished(message) {
  * @returns {string}
  */
 export function punishedAndBanned(message) {
+    message.text = message.text.replace(/([\\`*_{}[\]()#+\-!.|>~])/g, '\\$1');
+
     return `**Deleted message and banned spammer:**
 
-[${message.senderName}](tg://${message.senderId})
-[${moment(message.at).format('YYYY MM dd HH:mm:ss')}]
+[${message.senderName}](tg://user?id=${message.senderId})
+[${moment(message.at).format('YYYY/MM/DD HH:mm:ss')}]
 
 >> ${message.text}
 `;

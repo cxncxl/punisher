@@ -1,7 +1,7 @@
 import { readFileSync, appendFileSync } from 'fs';
 
 import TelegramBot from 'node-telegram-bot-api';
-import { Chat, createChat, getChats } from './database';
+import { Chat, createChat, getChats } from './database.js';
 
 /**
  * Log an error / send notification to admin

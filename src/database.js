@@ -26,8 +26,8 @@ export async function getChat(id) {
 
     return new Chat(
         doc.id,
-        doc.adminIds,
-        doc.hasPremius,
+        doc.adminsIds,
+        doc.hasPremium,
         doc.processedMessages,
         doc.deletedMessages,
         doc.bannedSpammers,
@@ -42,8 +42,8 @@ export async function getChats() {
 
     return docs.map(doc => new Chat(
         doc.id,
-        doc.adminIds,
-        doc.hasPremius,
+        doc.adminsIds,
+        doc.hasPremium,
         doc.processedMessages,
         doc.deletedMessages,
         doc.bannedSpammers,

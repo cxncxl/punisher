@@ -286,7 +286,7 @@ function buildMessage(tgMessage) {
         senderName: tgMessage.from ? 
             `${tgMessage.from.first_name} ${tgMessage.from.last_name ?? ''}`
             : null, 
-        at: new Date(tgMessage.date),
+        at: new Date(tgMessage.date * 1000),
         text: tgMessage.text ?? '',
         suspicious: null,
         aiConfidence: null,
@@ -425,6 +425,9 @@ function punish(message, report, ban) {
     messagesBuf.push(message);
 
     for (const admin of admins) {
+        console.log(
+            messages.punished(message),
+        );
         bot.sendMessage(
             admin,
             messages.punished(message),
