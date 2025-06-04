@@ -6,8 +6,8 @@ const chatsCollectionName = 'chats';
 
 const client = new MongoClient(url);
 await client.connect();
-const db = client.db(dbName);
-const chats = db.collection(chatsCollectionName);
+export const db = client.db(dbName);
+export const chats = db.collection(chatsCollectionName);
 
 export function close() {
     client.close();
@@ -60,13 +60,18 @@ export async function getChats() {
     * @param {Chat} chat
 */
 export async function createChat(chat) {
-    if (await getChat(chat.id) !== null) {
+    const ch = await getChat(chat.id);
+    console.log('saved chat', ch);
+    if (ch !== null) {
         const toUpdate = { ...chat, id: undefined };
         delete toUpdate.id;
+        delete toUpdate._id;
 
         await chats.updateOne({
             id: chat.id
         }, { $set: { ...toUpdate } });
+
+        return;
     }
 
     await chats.insertOne(chat);

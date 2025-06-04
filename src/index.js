@@ -232,6 +232,8 @@ function handleMyChatMember(message) {
             premiumedOn: undefined,
             locale: 'ua',
         });
+
+        utils.exportChats(chats);
     }
 }
 

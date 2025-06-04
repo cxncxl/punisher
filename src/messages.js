@@ -218,15 +218,12 @@ export function noPremiumUa(chat) {
 `);
 }
 
+const insertAt = (str, sub, pos) => `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
+
 function escapeMarkdownOnce(text) {
-  const markdownSpecialChars = [
-    '\\', '`', '*', '_', '{', '}', '[', ']', '(', ')', '#', '+', '-', '.', '!', '|', '>', '~'
-  ];
+    const charsToEscape = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'];
 
-  const escaped = text.replace(
-    new RegExp(`(?<!\\\\)([${markdownSpecialChars.map(c => '\\' + c).join('')}])`, 'g'),
-    '\\$1'
-  );
+    const escapeRegExp = new RegExp(`([${charsToEscape.map(c => '\\' + c).join('')}])`, 'g');
 
-  return escaped;
+    return text.replace(escapeRegExp, '');
 }
