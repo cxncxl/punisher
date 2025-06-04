@@ -114,7 +114,8 @@ async function handleTgChatMessage(message) {
     
     judge(aiAnalyzed);
 
-    const chat = chats.find(c => c.id === chat.id);
+    const chat = chats.find(c => c.id === message.chat.id);
+    if (!chat) return;
     chat.processedMessages++;
 
     utils.exportChats(chats);
