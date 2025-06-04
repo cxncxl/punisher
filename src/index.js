@@ -382,6 +382,7 @@ function notifyAdminsAboutPossibleSpam(message) {
                         },
                     ]],
                 },
+                parse_mode: 'MarkdownV2',
             }
         );
     }
@@ -477,6 +478,7 @@ function ban(message) {
         bot.sendMessage(
             admin,
             messages.punishedAndBanned(message),
+            { parse_mode: 'MarkdownV2' },
         );
     }
 }
