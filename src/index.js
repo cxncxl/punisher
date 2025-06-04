@@ -87,6 +87,8 @@ bot.onText(/\!prom/, handlePromote);
 bot.onText(/\!spam/, handleReport);
 bot.onText(/\!stats/, handleStats);
 bot.onText(/\!premium/, handlePremium);
+bot.onText(/\!ua/, handleUaLocale);
+bot.onText(/\!en/, handleEnLocale);
 
 /**
  * Handles new chat member
@@ -118,7 +120,7 @@ async function handleTgChatMessage(message) {
         if (Math.round(Math.random() * 10) >= 9) {
             bot.sendMessage(
                 chat.id,
-                messages.noPremium(chat),
+                messages.localization(chat.locale).noPremium(chat),
                 { parse_mode: 'MarkdownV2' },
             );
         }
@@ -228,6 +230,7 @@ function handleMyChatMember(message) {
             bannedSpammers: 0,
             addedOn: new Date(),
             premiumedOn: undefined,
+            locale: 'ua',
         });
     }
 }
@@ -268,7 +271,7 @@ function handlePromote(message, match) {
 
     bot.sendMessage(
         message.chat.id,
-        messages.actionSuccess(),
+        messages.localization(chat.locale).actionSuccess(),
         {
             reply_to_message_id: message.message_id,
         },
@@ -311,7 +314,7 @@ function handleStats(message) {
     const chat = chats.find(c => c.id === message.chat.id);
     if (!chat) return;
 
-    const data = messages.stats(chat);
+    const data = messages.localization(chat.locale).stats(chat);
 
     bot.sendMessage(
         chat.id,
@@ -339,7 +342,66 @@ async function handlePremium(message) {
 
     bot.sendMessage(
         chat.id,
-        messages.actionSuccess(),
+        messages.localization(chat.locale).actionSuccess(),
+        { reply_to_message_id: message.message_id },
+    );
+}
+
+/**
+ * Use Ukrainian language in chat 
+ *
+ * @param {TelegramBot.Message} message
+ * @returns {Promise<void>}
+ */
+async function handleUaLocale(message) {
+    const chat = chats.find(c => c.id === message.chat.id);
+    if (!chat) return;
+
+    if (!chat.adminsIds.includes(message.from?.id ?? -1)) {
+        return;
+    }
+
+    chat.locale = 'ua';
+    database.createChat(chat);
+
+    bot.sendMessage(
+        chat.id,
+        messages.localization(chat.locale).actionSuccess(),
+        { reply_to_message_id: message.message_id },
+    );
+}
+
+/**
+ * Use English language in chat 
+ *
+ * @param {TelegramBot.Message} message
+ * @returns {Promise<void>}
+ */
+async function handleEnLocale(message) {
+    const chat = chats.find(c => c.id === message.chat.id);
+    if (!chat) return;
+
+    if (!chat.adminsIds.includes(message.from?.id ?? -1)) {
+        return;
+    }
+
+    chat.locale = 'en';
+    database.createChat(chat);
+
+    bot.sendMessage(
+        chat.id,
+        messages.localization(chat.locale).actionSuccess(),
+        { reply_to_message_id: message.message_id },
+    );
+}
+
+/**
+ * @param {TelegramBot.Message} message
+ */
+async function hanldeRu(message) {
+    bot.sendMessage(
+        message.chat.id,
+        'москаль в стойло',
         { reply_to_message_id: message.message_id },
     );
 }
@@ -440,16 +502,16 @@ function notifyAdminsAboutPossibleSpam(message) {
     for (const admin of admins) {
         bot.sendMessage(
             admin,
-            messages.possibleSpam(message),
+            messages.localization(chat.locale).possibleSpam(message),
             {
                 reply_markup: {
                     inline_keyboard: [[
                         {
-                            text: messages.punish(),
+                            text: messages.localization(chat.locale).punish(),
                             callback_data: `punish;${messagesBuf.length - 1}`,
                         },
                         {
-                            text: messages.falsePositive(),
+                            text: messages.localization(chat.locale).falsePositive(),
                             callback_data: `falsePositive;${messagesBuf.length - 1}`,
                         },
                     ]],
@@ -499,20 +561,20 @@ function punish(message, report, ban) {
 
     for (const admin of admins) {
         console.log(
-            messages.punished(message),
+            messages.localization(chat.locale).punished(message),
         );
         bot.sendMessage(
             admin,
-            messages.punished(message),
+            messages.localization(chat.locale).punished(message),
             {
                 reply_markup: {
                     inline_keyboard: [[
                         {
-                            text: messages.ban(),
+                            text: messages.localization(chat.locale).ban(),
                             callback_data: `ban;${messagesBuf.length - 1}`,
                         },
                         {
-                            text: messages.falsePositive(),
+                            text: messages.localization(chat.locale).falsePositive(),
                             callback_data: `falsePositive;${messagesBuf.length - 1}`,
                         },
                     ]],
@@ -549,7 +611,7 @@ function ban(message) {
     for (const admin of admins) {
         bot.sendMessage(
             admin,
-            messages.punishedAndBanned(message),
+            messages.localization(chat.locale).punishedAndBanned(message),
             { parse_mode: 'MarkdownV2' },
         );
     }

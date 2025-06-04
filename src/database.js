@@ -32,6 +32,7 @@ export async function getChat(id) {
         doc.deletedMessages ?? 0,
         doc.bannedSpammers ?? 0,
         doc.addedOn ?? new Date(),
+        doc.locale ?? 'ua',
     );
 }
 
@@ -49,6 +50,7 @@ export async function getChats() {
         doc.deletedMessages ?? 0,
         doc.bannedSpammers ?? 0,
         doc.addedOn ?? new Date(),
+        doc.locale ?? 'ua',
     ));
 }
 
@@ -94,6 +96,8 @@ export class Chat {
         addedOn,
         /** @type Date | undefined */
         premiumedOn,
+        /** @type string | undefined */
+        locale = 'ua',
     ) {
         this.id = id;
         this.adminsIds = adminsIds;
@@ -103,6 +107,7 @@ export class Chat {
         this.bannedSpammers = bannedSpammers;
         this.addedOn = addedOn;
         this.premiumedOn = premiumedOn;
+        this.locale = locale;
     }
 }
 
