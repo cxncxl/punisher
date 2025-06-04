@@ -7,7 +7,7 @@ import moment from 'moment'
  * @returns {string}
  */
 export function possibleSpam(message) {
-    message.text = message.text.replace(/([\\`*_{}[\]()#+\-!.|>~])/g, '\\$1');
+    message.text = escapeMarkdownOnce(message.text);
 
     return `**Possible spam message:** 
 
@@ -25,7 +25,7 @@ export function possibleSpam(message) {
  * @returns {string}
  */
 export function punished(message) {
-    message.text = message.text.replace(/([\\`*_{}[\]()#+\-!.|>~])/g, '\\$1');
+    message.text = escapeMarkdownOnce(message.text);
 
     return `**Deleted message:**
 
@@ -43,7 +43,7 @@ export function punished(message) {
  * @returns {string}
  */
 export function punishedAndBanned(message) {
-    message.text = message.text.replace(/([\\`*_{}[\]()#+\-!.|>~])/g, '\\$1');
+    message.text = escapeMarkdownOnce(message.text);
 
     return `**Deleted message and banned spammer:**
 
@@ -68,4 +68,17 @@ export function actionSuccess() {
 
 export function ban() {
     return 'Ban user';
+}
+
+function escapeMarkdownOnce(text) {
+  const markdownSpecialChars = [
+    '\\', '`', '*', '_', '{', '}', '[', ']', '(', ')', '#', '+', '-', '.', '!', '|', '>', '~'
+  ];
+
+  const escaped = text.replace(
+    new RegExp(`(?<!\\\\)([${markdownSpecialChars.map(c => '\\' + c).join('')}])`, 'g'),
+    '\\$1'
+  );
+
+  return escaped;
 }
