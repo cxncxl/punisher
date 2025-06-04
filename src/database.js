@@ -32,6 +32,7 @@ export async function getChat(id) {
         doc.deletedMessages ?? 0,
         doc.bannedSpammers ?? 0,
         doc.addedOn ?? new Date(),
+        doc.premiumedOn ?? undefined,
         doc.locale ?? 'ua',
     );
 }
@@ -50,6 +51,7 @@ export async function getChats() {
         doc.deletedMessages ?? 0,
         doc.bannedSpammers ?? 0,
         doc.addedOn ?? new Date(),
+        doc.premiumedOn ?? undefined,
         doc.locale ?? 'ua',
     ));
 }
