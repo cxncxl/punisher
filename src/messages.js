@@ -62,7 +62,7 @@ export function punishedAndBanned(message) {
  */
 export function stats(chat) {
     return escapeMarkdownOnce(`
-Since ${moment(chat.addedOn).format('dd.MM.YYYY')} I've
+Since ${moment(chat.addedOn).format('DD.MM.YYYY')} I've
 
 Processed messages: ${chat.processedMessages}
 Deleted spam messages: ${chat.deletedMessages}

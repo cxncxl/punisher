@@ -6,6 +6,7 @@ import * as prompts from './prompts.js';
 import * as utils from './utils.js';
 import * as messages from './messages.js';
 import { Chat } from './database.js';
+import * as database from './database.js';
 
 dotenv.config();
 
@@ -112,6 +113,11 @@ async function handleTgChatMessage(message) {
     if (!aiAnalyzed) return;
     
     judge(aiAnalyzed);
+
+    const chat = chats.find(c => c.id === chat.id);
+    chat.processedMessages++;
+
+    utils.exportChats(chats);
 }
 
 /**
@@ -519,6 +525,7 @@ function falsePositive(message) {
 
 function exit() {
     utils.exportChats(chats);
+    database.close();
     process.exit();
 }
 
