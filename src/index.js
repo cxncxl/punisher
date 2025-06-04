@@ -115,7 +115,7 @@ async function handleTgChatMessage(message) {
         !chat.hasPremium
         && chat.deletedMessages > configs.freeDeletionTreshold
     ) {
-        if (Math.round(Math.random() * 10) > 9) {
+        if (Math.round(Math.random() * 10) >= 9) {
             bot.sendMessage(
                 chat.id,
                 messages.noPremium(chat),
