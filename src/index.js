@@ -111,14 +111,19 @@ async function handleTgChatMessage(message) {
     const chat = chats.find(c => c.id === message.chat.id);
     if (!chat) return;
 
-    if (!chat.hasPremium && chat.deletedMessages > configs.freeDeletionTreshold) {
-        if (Math.round(Math.random() * 10)) {
+    if (
+        !chat.hasPremium
+        && chat.deletedMessages > configs.freeDeletionTreshold
+    ) {
+        if (Math.round(Math.random() * 10) > 9) {
             bot.sendMessage(
                 chat.id,
                 messages.noPremium(chat),
                 { parse_mode: 'MarkdownV2' },
             );
         }
+
+        return;
     }
 
     const intMessage = buildMessage(message);
