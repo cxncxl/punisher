@@ -61,9 +61,9 @@ export async function getChats() {
 */
 export async function createChat(chat) {
     if (await getChat(chat.id) !== null) {
-        await chats.deleteOne({
-            id: chat.id,
-        });
+        await chats.updateOne({
+            id: chat.id
+        }, { $set: { ...chat } });
     }
 
     await chats.insertOne(chat);
