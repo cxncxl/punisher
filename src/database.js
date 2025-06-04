@@ -26,11 +26,12 @@ export async function getChat(id) {
 
     return new Chat(
         doc.id,
-        doc.adminsIds,
-        doc.hasPremium,
-        doc.processedMessages,
-        doc.deletedMessages,
-        doc.bannedSpammers,
+        doc.adminsIds ?? [],
+        doc.hasPremium ?? false,
+        doc.processedMessages ?? 0,
+        doc.deletedMessages ?? 0,
+        doc.bannedSpammers ?? 0,
+        doc.addedOn ?? new Date(),
     );
 }
 
@@ -42,11 +43,12 @@ export async function getChats() {
 
     return docs.map(doc => new Chat(
         doc.id,
-        doc.adminsIds,
-        doc.hasPremium,
-        doc.processedMessages,
-        doc.deletedMessages,
-        doc.bannedSpammers,
+        doc.adminsIds ?? [],
+        doc.hasPremium ?? false,
+        doc.processedMessages ?? 0,
+        doc.deletedMessages ?? 0,
+        doc.bannedSpammers ?? 0,
+        doc.addedOn ?? new Date(),
     ));
 }
 
@@ -79,6 +81,8 @@ export class Chat {
         deletedMessages,
         /** @type number */
         bannedSpammers,
+        /** @type Date */
+        addedOn,
     ) {
         this.id = id;
         this.adminsIds = adminsIds;
@@ -86,6 +90,7 @@ export class Chat {
         this.processedMessages = processedMessages;
         this.deletedMessages = deletedMessages;
         this.bannedSpammers = bannedSpammers;
+        this.addedOn = addedOn;
     }
 }
 

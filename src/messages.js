@@ -54,6 +54,22 @@ export function punishedAndBanned(message) {
 `;
 }
 
+/**
+ * Chat statistic
+ *
+ * @param {import('./database.js').Chat} chat
+ * @returns {string}
+ */
+export function stats(chat) {
+    return `
+Since ${moment(chat.addedOn).format('dd.MM.YYYY')} I've
+
+Processed messages: ${chat.processedMessages}
+Deleted spam messages: ${chat.deletedMessages}
+Banned spammers: ${chat.bannedSpammers}
+`
+}
+
 export function punish() {
     return 'Punish';
 }

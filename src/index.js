@@ -83,6 +83,7 @@ bot.on('callback_query', handleInlineKeyboard);
 bot.on('my_chat_member', handleMyChatMember);
 bot.onText(/\!prom/, handlePromote);
 bot.onText(/\!spam/, handleReport);
+bot.onText(/\!stats/, handleStats);
 
 /**
  * Handles new chat member
@@ -199,6 +200,7 @@ function handleMyChatMember(message) {
             deletedMessages: 0,
             processedMessages: 0,
             bannedSpammers: 0,
+            addedOn: new Date(),
         });
     }
 }
@@ -270,6 +272,28 @@ function handleReport(message, match) {
 
     const intMessage = buildMessage(message.reply_to_message);
     punish(intMessage, true, false);
+}
+
+/**
+ * Request chat statistics
+ *
+ * @param {TelegramBot.Message} message
+ * @returns {void}
+ */
+function handleStats(message) {
+    const chat = chats.find(c => c.id === message.chat.id);
+    if (!chat) return;
+
+    const data = messages.stats(chat);
+
+    bot.sendMessage(
+        chat.id,
+        data,
+        {
+            reply_to_message_id: message.message_id,
+            parse_mode: 'MarkdownV2',
+        },
+    );
 }
 
 /**
