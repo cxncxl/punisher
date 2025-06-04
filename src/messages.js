@@ -86,6 +86,15 @@ export function ban() {
     return 'Ban user';
 }
 
+/**
+ * @param {import('./database.js').Chat} chat
+ */
+export function noPremium(chat) {
+    return escapeMarkdownOnce(`
+You don't have premium subscription active. I've already deleted ${chat.deletedMessages} spam messages in this chat. If you want to continue using me, please contact support for purchasing premium
+`);
+}
+
 function escapeMarkdownOnce(text) {
   const markdownSpecialChars = [
     '\\', '`', '*', '_', '{', '}', '[', ']', '(', ')', '#', '+', '-', '.', '!', '|', '>', '~'

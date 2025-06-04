@@ -7,6 +7,7 @@ import * as utils from './utils.js';
 import * as messages from './messages.js';
 import { Chat } from './database.js';
 import * as database from './database.js';
+import * as configs from './configs.js';
 
 dotenv.config();
 
@@ -85,6 +86,7 @@ bot.on('my_chat_member', handleMyChatMember);
 bot.onText(/\!prom/, handlePromote);
 bot.onText(/\!spam/, handleReport);
 bot.onText(/\!stats/, handleStats);
+bot.onText(/\!premium/, handlePremium);
 
 /**
  * Handles new chat member
@@ -105,7 +107,19 @@ async function handleTgChatMessage(message) {
         message.chat.type != 'group'
         && message.chat.type != 'supergroup'
     ) handleTgPrivateMessage(message);
-    if (!chats.some(c => c.id === message.chat.id)) return; // Unknown chat
+
+    const chat = chats.find(c => c.id === message.chat.id);
+    if (!chat) return;
+
+    if (!chat.hasPremium && chat.deletedMessages > configs.freeDeletionTreshold) {
+        if (Math.round(Math.random() * 10)) {
+            bot.sendMessage(
+                chat.id,
+                messages.noPremium(chat),
+                { parse_mode: 'MarkdownV2' },
+            );
+        }
+    }
 
     const intMessage = buildMessage(message);
     const aiAnalyzed = await analyzeMessage(intMessage);
@@ -114,8 +128,6 @@ async function handleTgChatMessage(message) {
     
     judge(aiAnalyzed);
 
-    const chat = chats.find(c => c.id === message.chat.id);
-    if (!chat) return;
     chat.processedMessages++;
 
     utils.exportChats(chats);
@@ -132,6 +144,8 @@ function handleTgPrivateMessage(message) {
     if (message.chat.type != 'private') return;
 
     if (message.text && message.text.includes('ping'))
+        console.log(message.from?.id);
+
         bot.sendMessage(
             message.chat.id,
             'pong',
@@ -208,6 +222,7 @@ function handleMyChatMember(message) {
             processedMessages: 0,
             bannedSpammers: 0,
             addedOn: new Date(),
+            premiumedOn: undefined,
         });
     }
 }
@@ -300,6 +315,27 @@ function handleStats(message) {
             reply_to_message_id: message.message_id,
             parse_mode: 'MarkdownV2',
         },
+    );
+}
+
+/**
+ * Make chat premium
+ *
+ * @param {TelegramBot.Message} message
+ * @returns {Promise<void>}
+ */
+async function handlePremium(message) {
+    if (!configs.superAdmins?.includes(message.from?.id ?? -1)) return;
+
+    const chat = chats.find(c => c.id === message.chat.id);
+    if (!chat) return;
+
+    await database.makeChatPremium(chat);
+
+    bot.sendMessage(
+        chat.id,
+        messages.actionSuccess(),
+        { reply_to_message_id: message.message_id },
     );
 }
 
@@ -529,6 +565,26 @@ function exit() {
     database.close();
     process.exit();
 }
+
+setInterval(async () => {
+    const chats = await database.getChats();
+    for (const chat of chats) {
+        if (!chat.hasPremium) continue;
+        if (!chat.premiumedOn) {
+            chat.hasPremium = false;
+            database.createChat(chat);
+            continue;
+        };
+
+        const premiumDur = new Date().getTime() - chat.premiumedOn.getTime();
+
+        if (premiumDur > configs.premiumDuration) {
+            chat.hasPremium = false;
+            chat.premiumedOn = undefined;
+            database.createChat(chat);
+        }
+    }
+}, 1000 * 60 * 60 * 4);
 
 process.on('exit', () => exit());
 process.on('SIGINT', () => exit());

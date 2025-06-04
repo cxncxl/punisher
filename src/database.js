@@ -67,6 +67,15 @@ export async function createChat(chat) {
     await chats.insertOne(chat);
 }
 
+/**
+    * @param {Chat} chat
+*/
+export async function makeChatPremium(chat) {
+    chat.hasPremium = true;
+    chat.premiumedOn = new Date();
+    createChat(chat);
+}
+
 export class Chat {
     constructor(
         /** @type number */
@@ -83,6 +92,8 @@ export class Chat {
         bannedSpammers,
         /** @type Date */
         addedOn,
+        /** @type Date | undefined */
+        premiumedOn,
     ) {
         this.id = id;
         this.adminsIds = adminsIds;
@@ -91,6 +102,7 @@ export class Chat {
         this.deletedMessages = deletedMessages;
         this.bannedSpammers = bannedSpammers;
         this.addedOn = addedOn;
+        this.premiumedOn = premiumedOn;
     }
 }
 
