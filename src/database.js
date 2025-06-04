@@ -63,7 +63,7 @@ export async function createChat(chat) {
     if (await getChat(chat.id) !== null) {
         await chats.updateOne({
             id: chat.id
-        }, { $set: { ...chat } });
+        }, { $set: { ...chat, id: undefined, } });
     }
 
     await chats.insertOne(chat);
