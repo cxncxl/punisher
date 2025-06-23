@@ -38,7 +38,7 @@ const bot = new TelegramBot(process.env.TG_BOT_KEY ?? '', {
  */
 const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? '')
     .getGenerativeModel({
-        model: 'gemini-1.5-flash',
+        model: 'gemini-2.5-flash',
         safetySettings: [
             {
                 category: HarmCategory.HARM_CATEGORY_HARASSMENT,
@@ -89,12 +89,15 @@ bot.onText(/\!stats/, handleStats);
 bot.onText(/\!premium/, handlePremium);
 bot.onText(/\!ua/, handleUaLocale);
 bot.onText(/\!en/, handleEnLocale);
+bot.onText(/\!ru/, handleRu);
 
 /**
  * Handles new chat member
  *
  * @param {TelegramBot.Message} message
  * @returns {void}
+ *
+ * @todo implement
  */
 function handleNewTgChatMember(message) {}
 
@@ -400,7 +403,7 @@ async function handleEnLocale(message) {
 /**
  * @param {TelegramBot.Message} message
  */
-async function hanldeRu(message) {
+async function handleRu(message) {
     bot.sendMessage(
         message.chat.id,
         'москаль в стойло',
