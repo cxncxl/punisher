@@ -1,11 +1,11 @@
-import moment from 'moment'
+import moment from "moment";
 
-/** 
+/**
  * @param {string} local
  */
 export function localization(local) {
     switch (local) {
-        case 'en':
+        case "en":
             return {
                 possibleSpam,
                 punished,
@@ -41,10 +41,11 @@ export function localization(local) {
 export function possibleSpam(message) {
     message.text = escapeMarkdownOnce(message.text);
 
-    return `**Possible spam message:** 
+    return `**Possible spam message:**
+(At ${message.chatName})
 
 [${message.senderName}](tg://user?id=${message.senderId})
-[${moment(message.at).format('YYYY/MM/DD HH:mm:ss')}]
+[${moment(message.at).format("YYYY/MM/DD HH:mm:ss")}]
 
 >> ${message.text}
 `;
@@ -59,10 +60,11 @@ export function possibleSpam(message) {
 export function possibleSpamUa(message) {
     message.text = escapeMarkdownOnce(message.text);
 
-    return `**Повідомлення виглядає як спам:** 
+    return `**Повідомлення виглядає як спам:**
+(У чаті ${message.chatName})
 
 [${message.senderName}](tg://user?id=${message.senderId})
-[${moment(message.at).format('YYYY/MM/DD HH:mm:ss')}]
+[${moment(message.at).format("YYYY/MM/DD HH:mm:ss")}]
 
 >> ${message.text}
 `;
@@ -80,7 +82,7 @@ export function punished(message) {
     return `**Deleted message:**
 
 [${message.senderName}](tg://user?id=${message.senderId})
-[${moment(message.at).format('YYYY/MM/DD HH:mm:ss')}]
+[${moment(message.at).format("YYYY/MM/DD HH:mm:ss")}]
 
 >> ${message.text}
 `;
@@ -98,7 +100,7 @@ export function punishedUa(message) {
     return `**Видалив повідомлення:**
 
 [${message.senderName}](tg://user?id=${message.senderId})
-[${moment(message.at).format('YYYY/MM/DD HH:mm:ss')}]
+[${moment(message.at).format("YYYY/MM/DD HH:mm:ss")}]
 
 >> ${message.text}
 `;
@@ -116,7 +118,7 @@ export function punishedAndBanned(message) {
     return `**Deleted message and banned spammer:**
 
 [${message.senderName}](tg://user?id=${message.senderId})
-[${moment(message.at).format('YYYY/MM/DD HH:mm:ss')}]
+[${moment(message.at).format("YYYY/MM/DD HH:mm:ss")}]
 
 >> ${message.text}
 `;
@@ -134,7 +136,7 @@ export function punishedAndBannedUa(message) {
     return `**Видалив повідомлення і заблокував спамера:**
 
 [${message.senderName}](tg://user?id=${message.senderId})
-[${moment(message.at).format('YYYY/MM/DD HH:mm:ss')}]
+[${moment(message.at).format("YYYY/MM/DD HH:mm:ss")}]
 
 >> ${message.text}
 `;
@@ -148,7 +150,7 @@ export function punishedAndBannedUa(message) {
  */
 export function stats(chat) {
     return escapeMarkdownOnce(`
-Since ${moment(chat.addedOn).format('DD.MM.YYYY')} I've
+Since ${moment(chat.addedOn).format("DD.MM.YYYY")} I've
 
 Processed messages: ${chat.processedMessages}
 Deleted spam messages: ${chat.deletedMessages}
@@ -164,7 +166,7 @@ Banned spammers: ${chat.bannedSpammers}
  */
 export function statsUa(chat) {
     return escapeMarkdownOnce(`
-З ${moment(chat.addedOn).format('DD.MM.YYYY')} я
+З ${moment(chat.addedOn).format("DD.MM.YYYY")} я
 
 Проаналізував повідомлень: ${chat.processedMessages}
 Видалив повідомлень зі спамом: ${chat.deletedMessages}
@@ -173,31 +175,31 @@ export function statsUa(chat) {
 }
 
 export function punish() {
-    return 'Punish';
+    return "Punish";
 }
 
 export function punishUa() {
-    return 'Покарати';
+    return "Покарати";
 }
 
 export function falsePositive() {
-    return 'Not a spam';
+    return "Not a spam";
 }
 
 export function falsePositiveUa() {
-    return 'Не спам';
+    return "Не спам";
 }
 
 export function actionSuccess() {
-    return '+';
+    return "+";
 }
 
 export function ban() {
-    return 'Ban user';
+    return "Ban user";
 }
 
 export function banUa() {
-    return 'Забанити';
+    return "Забанити";
 }
 
 /**
@@ -218,12 +220,35 @@ export function noPremiumUa(chat) {
 `);
 }
 
-const insertAt = (str, sub, pos) => `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
+const insertAt = (str, sub, pos) =>
+    `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
 
 function escapeMarkdownOnce(text) {
-    const charsToEscape = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'];
+    const charsToEscape = [
+        "_",
+        "*",
+        "[",
+        "]",
+        "(",
+        ")",
+        "~",
+        "`",
+        ">",
+        "#",
+        "+",
+        "-",
+        "=",
+        "|",
+        "{",
+        "}",
+        ".",
+        "!",
+    ];
 
-    const escapeRegExp = new RegExp(`([${charsToEscape.map(c => '\\' + c).join('')}])`, 'g');
+    const escapeRegExp = new RegExp(
+        `([${charsToEscape.map((c) => "\\" + c).join("")}])`,
+        "g",
+    );
 
-    return text.replace(escapeRegExp, '');
+    return text.replace(escapeRegExp, "");
 }
