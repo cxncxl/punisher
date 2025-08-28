@@ -80,6 +80,7 @@ export function punished(message) {
     message.text = escapeMarkdownOnce(message.text);
 
     return `**Deleted message:**
+(In chat ${message.chatName})
 
 [${message.senderName}](tg://user?id=${message.senderId})
 [${moment(message.at).format("YYYY/MM/DD HH:mm:ss")}]
@@ -98,6 +99,7 @@ export function punishedUa(message) {
     message.text = escapeMarkdownOnce(message.text);
 
     return `**Видалив повідомлення:**
+(У чаті ${message.chatName})
 
 [${message.senderName}](tg://user?id=${message.senderId})
 [${moment(message.at).format("YYYY/MM/DD HH:mm:ss")}]
@@ -116,6 +118,7 @@ export function punishedAndBanned(message) {
     message.text = escapeMarkdownOnce(message.text);
 
     return `**Deleted message and banned spammer:**
+(In chat ${message.chatName})
 
 [${message.senderName}](tg://user?id=${message.senderId})
 [${moment(message.at).format("YYYY/MM/DD HH:mm:ss")}]
@@ -134,6 +137,7 @@ export function punishedAndBannedUa(message) {
     message.text = escapeMarkdownOnce(message.text);
 
     return `**Видалив повідомлення і заблокував спамера:**
+(У чаті ${message.chatName})
 
 [${message.senderName}](tg://user?id=${message.senderId})
 [${moment(message.at).format("YYYY/MM/DD HH:mm:ss")}]
