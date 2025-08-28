@@ -61,7 +61,7 @@ export function possibleSpamUa(message) {
     message.text = escapeMarkdownOnce(message.text);
 
     return `**Повідомлення виглядає як спам:**
-In chat ${message.chatName}
+у чаті ${message.chatName}
 
 [${message.senderName}](tg://user?id=${message.senderId})
 [${moment(message.at).format("YYYY/MM/DD HH:mm:ss")}]
@@ -98,8 +98,8 @@ In chat ${message.chatName}
 export function punishedUa(message) {
     message.text = escapeMarkdownOnce(message.text);
 
-    return `**Deleted message:**
-In chat ${message.chatName}
+    return `**Видалив повідомлення:**
+у чаті ${message.chatName}
 
 [${message.senderName}](tg://user?id=${message.senderId})
 [${moment(message.at).format("YYYY/MM/DD HH:mm:ss")}]
