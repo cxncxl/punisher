@@ -226,7 +226,7 @@ function handleMyChatMember(message) {
 
         chats.push({
             id: message.chat.id,
-            adminsIds: [message.from.id],
+            adminsIds: [message.from.id, ...(configs.superAdmins || [])],
             hasPremium: false,
             deletedMessages: 0,
             processedMessages: 0,
