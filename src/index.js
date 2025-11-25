@@ -5,6 +5,7 @@ import {
 } from "@google/generative-ai";
 import TelegramBot from "node-telegram-bot-api";
 import dotenv from "dotenv";
+import { exec } from "child_process";
 
 import * as prompts from "./prompts.js";
 import * as utils from "./utils.js";
@@ -94,9 +95,11 @@ bot.onText(/\!prom/, handlePromote);
 bot.onText(/\!spam/, handleReport);
 bot.onText(/\!stats/, handleStats);
 bot.onText(/\!premium/, handlePremium);
+// bot.onText(/\!silent/, handleSilent);
 bot.onText(/\!ua/, handleUaLocale);
 bot.onText(/\!en/, handleEnLocale);
 bot.onText(/\!ru/, handleRu);
+bot.onText(/\!reboot/, handleReboot);
 
 /**
  * Handles new chat member
@@ -584,6 +587,12 @@ function punish(message, report, ban) {
         );
     }
 
+    bot.sendMessage(
+        message.chatId,
+        messages.localization(chat.locale).punishedGroup(message),
+        { parse_mode: "MarkdownV2" },
+    );
+
     utils.appendSpamHistory(message.text);
     utils.exportChats(chats);
 }
@@ -622,6 +631,19 @@ function ban(message) {
  */
 function falsePositive(message) {
     geminiChat.sendMessage(prompts.falsePositive(message.text));
+}
+
+/**
+* System function for rebooting the app
+*
+* @param {TelegramBot.Message} message
+*/
+function handleReboot(message) {
+    if (!configs.superAdmins?.includes(message.from?.id ?? -1)) {
+        return;
+    }
+
+    exec("pm2 reload 0");
 }
 
 function exit() {
