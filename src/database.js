@@ -67,7 +67,6 @@ export async function createChat(chat) {
     if (ch !== null) {
         const toUpdate = { ...chat, id: undefined };
         delete toUpdate.id;
-        delete toUpdate._id;
 
         await chats.updateOne({
             id: chat.id

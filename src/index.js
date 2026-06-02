@@ -436,7 +436,7 @@ function buildMessage(tgMessage) {
 async function analyzeMessage(message) {
     const prompt = prompts.analyzePrompt + message.text;
 
-    const aiRes = await geminiChat.sendMessage(prompt);
+    const aiRes = await withBackoff(() => geminiChat.sendMessage(prompt));
 
     const answer = aiRes.response
         .text()
@@ -460,6 +460,28 @@ async function analyzeMessage(message) {
         if (e instanceof SyntaxError)
             utils.log(bot, `Gemini sent non-JSON response: ${answer}`);
     }
+}
+
+/**
+ * Run function with exponential backoff
+ *
+ * @template T
+ * @param {() => Promise<T>} fn
+ * @param {number} retries
+ * @returns {Promise<T>}
+ */
+async function withBackoff(fn, retries = 0) {
+  try {
+    return await fn();
+  } catch (e) {
+    // TODO: de-hardcode
+    if (retries < 3) {
+      await new Promise((resolve) => setTimeout(resolve, 1000 + 1000 * retries));
+      return await withBackoff(fn, retries + 1);
+    }
+
+    throw e;
+  }
 }
 
 /**
@@ -501,6 +523,7 @@ function notifyAdminsAboutPossibleSpam(message) {
     messagesBuf.push(message);
 
     for (const admin of admins) {
+      try {
         bot.sendMessage(
             admin,
             messages.localization(chat.locale).possibleSpam(message),
@@ -526,6 +549,9 @@ function notifyAdminsAboutPossibleSpam(message) {
                 parse_mode: "MarkdownV2",
             },
         );
+      } catch {
+        console.error("failed to send message to admin", admin);
+      }
     }
 }
 
@@ -562,6 +588,7 @@ function punish(message, report, ban) {
 
     for (const admin of admins) {
         console.log(messages.localization(chat.locale).punished(message));
+      try {
         bot.sendMessage(
             admin,
             messages.localization(chat.locale).punished(message),
@@ -585,6 +612,9 @@ function punish(message, report, ban) {
                 parse_mode: "MarkdownV2",
             },
         );
+      } catch {
+        console.error("failed to send message to admin", admin);
+      }
     }
 
     bot.sendMessage(
@@ -615,11 +645,15 @@ function ban(message) {
     if (!admins || admins.length === 0) return;
 
     for (const admin of admins) {
+      try {
         bot.sendMessage(
             admin,
             messages.localization(chat.locale).punishedAndBanned(message),
             { parse_mode: "MarkdownV2" },
         );
+      } catch {
+        console.error("failed to send message to admin", admin);
+      }
     }
 }
 

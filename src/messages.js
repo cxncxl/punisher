@@ -9,6 +9,7 @@ export function localization(local) {
             return {
                 possibleSpam,
                 punished,
+                punishedGroup,
                 punishedAndBanned,
                 stats,
                 punish,
@@ -21,6 +22,7 @@ export function localization(local) {
             return {
                 possibleSpam: possibleSpamUa,
                 punished: punishedUa,
+                punishedGroup: punishedGroupUa,
                 punishedAndBanned: punishedAndBannedUa,
                 stats: statsUa,
                 punish: punishUa,
@@ -105,6 +107,27 @@ export function punishedUa(message) {
 [${moment(message.at).format("YYYY/MM/DD HH:mm:ss")}]
 
 >> ${message.text}
+`;
+}
+
+/**
+ * Punished notification, to be sent into the chat as self-promotion
+ *
+ * @param {import('./index.js').Message} message
+ * @returns {string}
+ */
+export function punishedGroup(message) {
+    return `[${message.senderName}](tg://user?id=${message.senderId}), your message has been deleted, because it looked like spam.`;
+}
+
+/**
+ * Punished notification, to be sent into the chat as self-promotion [UA]
+ *
+ * @param {import('./index.js').Message} message
+ * @returns {string}
+ */
+export function punishedGroupUa(message) {
+    return `[${message.senderName}](tg://user?id=${message.senderId}), ваше повідомлення було видалено, оскільки виглядало як спам.
 `;
 }
 
