@@ -475,8 +475,8 @@ async function withBackoff(fn, retries = 0) {
     return await fn();
   } catch (e) {
     // TODO: de-hardcode
-    if (retries < 3) {
-      await new Promise((resolve) => setTimeout(resolve, 1000 + 1000 * retries));
+    if (retries < 5) {
+      await new Promise((resolve) => setTimeout(resolve, 1000 * (2 ** retries)));
       return await withBackoff(fn, retries + 1);
     }
 
