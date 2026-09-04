@@ -1,0 +1,18 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "spam",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "textEmbeddings",
+          "vectorConfig": {
+            "dimension": 768,
+            "flat": {}
+          }
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
