@@ -18,6 +18,7 @@ import {
 import { evaluateMessage, type SpamCheckResult } from "../spam/index.js";
 import { getLocaleMessages, type LocaleMessages } from "./messages.js";
 import type { Chat, User } from "../shared/types.js";
+import { logMessage } from "../shared/logger.js";
 
 /**
  * Ensures that the chat and user documents exist in Firestore.
@@ -268,6 +269,14 @@ async function handleIncomingMessage(ctx: Context): Promise<void> {
   // This acknowledges the webhook request with '200 OK' immediately to prevent Telegram retries.
   void (async () => {
     try {
+      const config = await getConfig();
+      const prefix = `${message.message_id} (${senderName}): `;
+      logMessage(
+        config,
+        "standard",
+        `${prefix}Received message in chat ${chatId}: "${text.substring(0, 60)}"`,
+      );
+
       const { chat, user } = await ensureChatAndUser(
         ctx,
         chatId,
@@ -279,11 +288,16 @@ async function handleIncomingMessage(ctx: Context): Promise<void> {
         chat.locale ?? ("ua" satisfies Chat["locale"]),
       );
 
-      if (await shouldBypassSpamDetection(chatId, senderId, user)) {
+      if (
+        await shouldBypassSpamDetection(chatId, senderId, user, config, prefix)
+      ) {
         return;
       }
 
-      const result = await evaluateMessage(text);
+      const result = await evaluateMessage(text, {
+        messageId: message.message_id,
+        senderName,
+      });
       await handleMessageAnalysis(result, chat, message, user, ctx, msgs);
     } catch (err) {
       console.error("Spam evaluation failed:", err);
@@ -317,14 +331,25 @@ async function shouldBypassSpamDetection(
   chatId: string,
   senderId: string,
   user: User,
+  config: any,
+  prefix: string,
 ) {
   const isSenderAdmin = await isChatAdminOrSuperadmin(chatId, senderId);
   if (isSenderAdmin) {
+    logMessage(
+      config,
+      "standard",
+      `${prefix}Bypassed spam detection (user is admin/superadmin)`,
+    );
     return true;
   }
 
-  const config = await getConfig();
   if (user.messagesCount >= config.trustMessagesNumber) {
+    logMessage(
+      config,
+      "standard",
+      `${prefix}Bypassed spam detection (user is trusted, message count ${user.messagesCount} >= ${config.trustMessagesNumber})`,
+    );
     await incrementUserMessageCount(chatId, senderId);
     await incrementChatProcessedMessages(chatId);
     return true;
@@ -341,11 +366,20 @@ async function handleMessageAnalysis(
   ctx: Context,
   templates: LocaleMessages,
 ) {
+  const config = await getConfig();
+  const prefix = `${message.message_id} (${sender.name}): `;
+
   if (analysisResult.type === "safe") {
+    logMessage(config, "standard", `${prefix}Message classified as safe`);
     return await handleSafeMessage(chat, sender);
   }
 
   if (analysisResult.type === "vector_match") {
+    logMessage(
+      config,
+      "standard",
+      `${prefix}Message matches known spam in vector DB! Punishing...`,
+    );
     return handleVectorSpamMatch(
       ctx,
       chat.id,
@@ -360,10 +394,14 @@ async function handleMessageAnalysis(
   }
 
   if (analysisResult.type === "llm_spam") {
-    const config = await getConfig();
     const threshold = config.llmSpamConfidenceThreshold ?? 0.75;
 
     if (analysisResult.confidence >= threshold) {
+      logMessage(
+        config,
+        "standard",
+        `${prefix}High-confidence LLM spam detected (confidence: ${analysisResult.confidence} >= threshold ${threshold})! Punishing...`,
+      );
       await handleHighConfidenceLLMSpam(
         ctx,
         chat.id,
@@ -378,6 +416,11 @@ async function handleMessageAnalysis(
         analysisResult.textEmbeddings,
       );
     } else {
+      logMessage(
+        config,
+        "standard",
+        `${prefix}Low-confidence LLM spam detected (confidence: ${analysisResult.confidence} < threshold ${threshold})! Creating pending report...`,
+      );
       await handleLowConfidenceLLMSpam(
         ctx,
         chat.id,

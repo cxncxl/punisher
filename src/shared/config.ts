@@ -8,4 +8,5 @@ export const DEFAULT_CONFIG: Config = {
   superAdmins: [],
   spamSimilarityThreshold: 0.8,
   llmSpamConfidenceThreshold: 0.75,
+  logLevel: "off",
 } satisfies Config;

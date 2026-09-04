@@ -4,6 +4,8 @@ import {
 } from "@langchain/google-genai";
 import { z } from "zod";
 import type { LLMAnalysisResult } from "../shared/types.js";
+import { getConfig } from "../data/index.js";
+import { logMessage } from "../shared/logger.js";
 
 // Define the model name constants
 const EMBEDDING_MODEL = "gemini-embedding-001";
@@ -39,8 +41,20 @@ function getChatModelInstance(): ChatGoogleGenerativeAI {
  * @returns A promise resolving to an array of floating point numbers.
  */
 export async function generateEmbeddings(text: string): Promise<number[]> {
+  const config = await getConfig();
+  logMessage(
+    config,
+    "debug",
+    `Generating embeddings for text of length ${text.length}...`,
+  );
   const embeddings = getEmbeddingsInstance();
-  return embeddings.embedQuery(text);
+  const result = await embeddings.embedQuery(text);
+  logMessage(
+    config,
+    "debug",
+    `Embeddings generated successfully (dimensions: ${result.length})`,
+  );
+  return result;
 }
 
 /**
@@ -52,6 +66,12 @@ export async function generateEmbeddings(text: string): Promise<number[]> {
 export async function analyzeMessageWithLLM(
   text: string,
 ): Promise<LLMAnalysisResult> {
+  const config = await getConfig();
+  logMessage(
+    config,
+    "debug",
+    `Invoking Gemini LLM analysis for text of length ${text.length}...`,
+  );
   const model = getChatModelInstance();
 
   const analysisSchema = z.object({
@@ -92,5 +112,10 @@ ${text}
     ["human", userPrompt],
   ]);
 
+  logMessage(
+    config,
+    "debug",
+    `Gemini LLM analysis complete: isSpam=${result.isSpam}, confidence=${result.confidence}`,
+  );
   return result;
 }

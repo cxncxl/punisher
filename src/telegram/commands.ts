@@ -10,9 +10,11 @@ import {
   incrementChatDeletedMessages,
   incrementChatBannedSpammers,
   updateChatLocale,
+  getConfig,
 } from "../data/index.js";
 import { generateEmbeddings } from "../ai/index.js";
 import { getLocaleMessages, type LocaleMessages } from "./messages.js";
+import { logMessage } from "../shared/logger.js";
 
 /**
  * Executes direct administrative spam handling (deleting, banning, adding to KB).
@@ -133,16 +135,33 @@ async function handlePromote(ctx: CommandContext<any>): Promise<void> {
   if (!ctx.message) {
     return;
   }
+  const config = await getConfig();
   const chatId = String(ctx.chat.id);
   const senderId = String(ctx.message.from?.id ?? "");
   const replyTo = ctx.message.reply_to_message;
 
+  logMessage(
+    config,
+    "standard",
+    `Command /promote invoked in chat ${chatId} by user ${senderId}`,
+  );
+
   if (!replyTo || !replyTo.from) {
+    logMessage(
+      config,
+      "standard",
+      `Command /promote failed: Not a reply to a message`,
+    );
     return;
   }
 
   const authorized = await isChatAdminOrSuperadmin(chatId, senderId);
   if (!authorized) {
+    logMessage(
+      config,
+      "standard",
+      `Command /promote failed: User ${senderId} is not authorized`,
+    );
     return;
   }
 
@@ -151,6 +170,12 @@ async function handlePromote(ctx: CommandContext<any>): Promise<void> {
   const lastName =
     replyTo.from.last_name !== undefined ? ` ${replyTo.from.last_name}` : "";
   const repliedName = `${firstName}${lastName}`;
+
+  logMessage(
+    config,
+    "standard",
+    `Promoting user ${repliedUserId} (${repliedName}) to admin in chat ${chatId}`,
+  );
 
   try {
     await promoteUserToAdmin(chatId, repliedUserId);
@@ -176,16 +201,33 @@ async function handleSpam(ctx: CommandContext<any>): Promise<void> {
   if (!ctx.message) {
     return;
   }
+  const config = await getConfig();
   const chatId = String(ctx.chat.id);
   const senderId = String(ctx.message.from?.id ?? "");
   const replyTo = ctx.message.reply_to_message;
 
+  logMessage(
+    config,
+    "standard",
+    `Command /spam invoked in chat ${chatId} by user ${senderId}`,
+  );
+
   if (!replyTo || !replyTo.from) {
+    logMessage(
+      config,
+      "standard",
+      `Command /spam failed: Not a reply to a message`,
+    );
     return;
   }
 
   const text = replyTo.text ?? replyTo.caption ?? "";
   if (!text) {
+    logMessage(
+      config,
+      "standard",
+      `Command /spam failed: Replied message has no text/caption`,
+    );
     return;
   }
 
@@ -203,6 +245,11 @@ async function handleSpam(ctx: CommandContext<any>): Promise<void> {
   const authorized = await isChatAdminOrSuperadmin(chatId, senderId);
 
   if (authorized) {
+    logMessage(
+      config,
+      "standard",
+      `Admin user ${senderId} executing immediate punish on user ${repliedUserId}`,
+    );
     await executeAdminSpamPunish(
       ctx,
       chatId,
@@ -220,6 +267,11 @@ async function handleSpam(ctx: CommandContext<any>): Promise<void> {
       // Ignore
     }
   } else {
+    logMessage(
+      config,
+      "standard",
+      `Regular user ${senderId} registering user spam report for user ${repliedUserId}`,
+    );
     await registerUserSpamReport(
       ctx,
       chatId,
@@ -242,7 +294,10 @@ async function handleStats(ctx: CommandContext<any>): Promise<void> {
   if (!ctx.message) {
     return;
   }
+  const config = await getConfig();
   const chatId = String(ctx.chat.id);
+  logMessage(config, "standard", `Command /stats invoked in chat ${chatId}`);
+
   const chat = await getChat(chatId);
 
   const locale = chat?.locale ?? "ua";
@@ -271,14 +326,31 @@ async function handleSetUa(ctx: CommandContext<any>): Promise<void> {
   if (!ctx.message) {
     return;
   }
+  const config = await getConfig();
   const chatId = String(ctx.chat.id);
   const senderId = String(ctx.message.from?.id ?? "");
 
+  logMessage(
+    config,
+    "standard",
+    `Command /ua invoked in chat ${chatId} by user ${senderId}`,
+  );
+
   const authorized = await isChatAdminOrSuperadmin(chatId, senderId);
   if (!authorized) {
+    logMessage(
+      config,
+      "standard",
+      `Command /ua failed: User ${senderId} not authorized`,
+    );
     return;
   }
 
+  logMessage(
+    config,
+    "standard",
+    `Setting chat ${chatId} locale to Ukrainian (ua)`,
+  );
   await updateChatLocale(chatId, "ua");
 }
 
@@ -291,14 +363,31 @@ async function handleSetEn(ctx: CommandContext<any>): Promise<void> {
   if (!ctx.message) {
     return;
   }
+  const config = await getConfig();
   const chatId = String(ctx.chat.id);
   const senderId = String(ctx.message.from?.id ?? "");
 
+  logMessage(
+    config,
+    "standard",
+    `Command /en invoked in chat ${chatId} by user ${senderId}`,
+  );
+
   const authorized = await isChatAdminOrSuperadmin(chatId, senderId);
   if (!authorized) {
+    logMessage(
+      config,
+      "standard",
+      `Command /en failed: User ${senderId} not authorized`,
+    );
     return;
   }
 
+  logMessage(
+    config,
+    "standard",
+    `Setting chat ${chatId} locale to English (en)`,
+  );
   await updateChatLocale(chatId, "en");
 }
 

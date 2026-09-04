@@ -121,6 +121,11 @@ export interface Config {
    * The minimum confidence score for high-confidence LLM classification.
    */
   llmSpamConfidenceThreshold?: number;
+
+  /**
+   * The active log level for the system.
+   */
+  logLevel?: "off" | "standard" | "debug";
 }
 
 /**
