@@ -5,7 +5,7 @@ export interface Chat {
   /**
    * The unique Telegram chat identifier (in-app ID).
    */
-  id: number;
+  id: string;
 
   /**
    * The title of the Telegram chat.
@@ -35,7 +35,7 @@ export interface User {
   /**
    * The unique Telegram user identifier.
    */
-  id: number;
+  id: string;
 
   /**
    * The display name of the user.
@@ -90,7 +90,7 @@ export interface Config {
   /**
    * The list of Telegram user IDs of superadmins.
    */
-  superAdmins: number[];
+  superAdmins: string[];
 
   /**
    * The minimum similarity threshold for vector-based spam matching.
@@ -115,17 +115,17 @@ export interface PendingReport {
   /**
    * The unique Telegram ID of the chat.
    */
-  chatId: number;
+  chatId: string;
 
   /**
    * The unique Telegram ID of the message.
    */
-  messageId: number;
+  messageId: string;
 
   /**
    * The Telegram user ID of the message sender.
    */
-  senderId: number;
+  senderId: string;
 
   /**
    * The display name of the message sender.
