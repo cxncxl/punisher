@@ -21,6 +21,26 @@ export interface Chat {
    * Optional expiration date for premium features.
    */
   premiumExpiresOn?: Date;
+
+  /**
+   * Total number of processed messages in the chat.
+   */
+  processedMessages?: number;
+
+  /**
+   * Total number of deleted spam messages in the chat.
+   */
+  deletedMessages?: number;
+
+  /**
+   * Total number of banned spammers in the chat.
+   */
+  bannedSpammers?: number;
+
+  /**
+   * The language locale of the chat (e.g. "en" or "ua").
+   */
+  locale?: string;
 }
 
 /**

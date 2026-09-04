@@ -226,6 +226,100 @@ export async function updatePendingReportStatus(
   await reportRef.update({ status } satisfies Partial<PendingReport>);
 }
 
+/**
+ * Retrieves all admins and superadmins registered inside a specific chat.
+ */
+export async function getChatAdmins(chatId: string): Promise<User[]> {
+  const snapshot = await getUsersCollection(chatId)
+    .where("role", "in", ["admin", "superadmin"])
+    .get();
+
+  return snapshot.docs.map((doc) => doc.data());
+}
+
+/**
+ * Checks if a specific user is an admin or a superadmin.
+ */
+export async function isChatAdminOrSuperadmin(
+  chatId: string,
+  userId: string,
+): Promise<boolean> {
+  const config = await getConfig();
+  if (config.superAdmins.includes(userId)) {
+    return true;
+  }
+
+  const user = await getUser(chatId, userId);
+  if (user === null) {
+    return false;
+  }
+
+  return user.role === "admin" || user.role === "superadmin";
+}
+
+/**
+ * Increments the processed messages count for a chat.
+ */
+export async function incrementChatProcessedMessages(
+  chatId: string,
+): Promise<void> {
+  await getChatsCollection()
+    .doc(chatId)
+    .set(
+      {
+        processedMessages: FieldValue.increment(1) as unknown as number,
+      },
+      { merge: true },
+    );
+}
+
+/**
+ * Increments the deleted spam messages count for a chat.
+ */
+export async function incrementChatDeletedMessages(
+  chatId: string,
+): Promise<void> {
+  await getChatsCollection()
+    .doc(chatId)
+    .set(
+      {
+        deletedMessages: FieldValue.increment(1) as unknown as number,
+      },
+      { merge: true },
+    );
+}
+
+/**
+ * Increments the banned spammers count for a chat.
+ */
+export async function incrementChatBannedSpammers(
+  chatId: string,
+): Promise<void> {
+  await getChatsCollection()
+    .doc(chatId)
+    .set(
+      {
+        bannedSpammers: FieldValue.increment(1) as unknown as number,
+      },
+      { merge: true },
+    );
+}
+
+/**
+ * Updates the locale of a chat.
+ */
+export async function updateChatLocale(
+  chatId: string,
+  locale: string,
+): Promise<void> {
+  await getChatsCollection().doc(chatId).set(
+    {
+      locale,
+    },
+    { merge: true },
+  );
+}
+
 function parseDocumentData<T>(doc: DocumentSnapshot<T>): T | null {
   if (!doc.exists) {
     return null;

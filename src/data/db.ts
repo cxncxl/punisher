@@ -30,6 +30,16 @@ const chatConverter = {
       ...(chat.premiumExpiresOn !== undefined
         ? { premiumExpiresOn: chat.premiumExpiresOn }
         : {}),
+      ...(chat.processedMessages !== undefined
+        ? { processedMessages: chat.processedMessages }
+        : {}),
+      ...(chat.deletedMessages !== undefined
+        ? { deletedMessages: chat.deletedMessages }
+        : {}),
+      ...(chat.bannedSpammers !== undefined
+        ? { bannedSpammers: chat.bannedSpammers }
+        : {}),
+      ...(chat.locale !== undefined ? { locale: chat.locale } : {}),
     };
   },
   fromFirestore(snapshot: QueryDocumentSnapshot): Chat {
@@ -52,6 +62,10 @@ const chatConverter = {
                 : new Date(String(premiumExpiresOnVal)),
           }
         : {}),
+      processedMessages: Number(data["processedMessages"] ?? 0),
+      deletedMessages: Number(data["deletedMessages"] ?? 0),
+      bannedSpammers: Number(data["bannedSpammers"] ?? 0),
+      locale: String(data["locale"] ?? "ua"),
     } satisfies Chat;
   },
 };
