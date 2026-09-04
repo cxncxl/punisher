@@ -136,6 +136,9 @@ const configConverter = {
       trustMessagesNumber: config.trustMessagesNumber,
       superAdmins: config.superAdmins,
       spamSimilarityThreshold: config.spamSimilarityThreshold,
+      ...(config.llmSpamConfidenceThreshold !== undefined
+        ? { llmSpamConfidenceThreshold: config.llmSpamConfidenceThreshold }
+        : {}),
     };
   },
   fromFirestore(snapshot: QueryDocumentSnapshot): Config {
@@ -149,6 +152,9 @@ const configConverter = {
       trustMessagesNumber: Number(data["trustMessagesNumber"] ?? 0),
       superAdmins,
       spamSimilarityThreshold: Number(data["spamSimilarityThreshold"] ?? 0.8),
+      llmSpamConfidenceThreshold: Number(
+        data["llmSpamConfidenceThreshold"] ?? 0.75,
+      ),
     } satisfies Config;
   },
 };

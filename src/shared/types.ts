@@ -116,6 +116,11 @@ export interface Config {
    * The minimum similarity threshold for vector-based spam matching.
    */
   spamSimilarityThreshold: number;
+
+  /**
+   * The minimum confidence score for high-confidence LLM classification.
+   */
+  llmSpamConfidenceThreshold?: number;
 }
 
 /**
