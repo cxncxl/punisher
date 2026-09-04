@@ -264,29 +264,37 @@ async function handleIncomingMessage(ctx: Context): Promise<void> {
   const senderId = String(message.from.id);
   const senderName = getSenderName(message);
 
-  const { chat, user } = await ensureChatAndUser(
-    ctx,
-    chatId,
-    senderId,
-    senderName,
-  );
+  // Run the heavy database and AI classification pipeline in the background.
+  // This acknowledges the webhook request with '200 OK' immediately to prevent Telegram retries.
+  void (async () => {
+    try {
+      const { chat, user } = await ensureChatAndUser(
+        ctx,
+        chatId,
+        senderId,
+        senderName,
+      );
 
-  const msgs = getLocaleMessages(
-    chat.locale ?? ("ua" satisfies Chat["locale"]),
-  );
+      const msgs = getLocaleMessages(
+        chat.locale ?? ("ua" satisfies Chat["locale"]),
+      );
 
-  if (await shouldBypassSpamDetection(chatId, senderId, user)) {
-    return;
-  }
+      if (await shouldBypassSpamDetection(chatId, senderId, user)) {
+        return;
+      }
 
-  try {
-    const result = await evaluateMessage(text);
-    await handleMessageAnalysis(result, chat, message, user, ctx, msgs);
-  } catch (err) {
-    console.error("Spam evaluation failed:", err);
-    await incrementUserMessageCount(chatId, senderId);
-    await incrementChatProcessedMessages(chatId);
-  }
+      const result = await evaluateMessage(text);
+      await handleMessageAnalysis(result, chat, message, user, ctx, msgs);
+    } catch (err) {
+      console.error("Spam evaluation failed:", err);
+      try {
+        await incrementUserMessageCount(chatId, senderId);
+        await incrementChatProcessedMessages(chatId);
+      } catch (innerErr) {
+        console.error("Failed to update message counts after error:", innerErr);
+      }
+    }
+  })();
 }
 
 /**
