@@ -1,5 +1,5 @@
-import { getConfig, searchSpam } from "../data";
-import { generateEmbeddings, analyzeMessageWithLLM } from "../ai";
+import { getConfig, searchSpam } from "../data/index.js";
+import { generateEmbeddings, analyzeMessageWithLLM } from "../ai/index.js";
 
 /**
  * Represents the classification outcome of a spam evaluation pipeline check.

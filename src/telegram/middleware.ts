@@ -14,10 +14,10 @@ import {
   getChat,
   upsertChat,
   upsertUser,
-} from "../data";
-import { evaluateMessage, type SpamCheckResult } from "../spam";
-import { getLocaleMessages, type LocaleMessages } from "./messages";
-import type { Chat, User } from "../shared/types";
+} from "../data/index.js";
+import { evaluateMessage, type SpamCheckResult } from "../spam/index.js";
+import { getLocaleMessages, type LocaleMessages } from "./messages.js";
+import type { Chat, User } from "../shared/types.js";
 
 /**
  * Ensures that the chat and user documents exist in Firestore.

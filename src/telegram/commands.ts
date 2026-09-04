@@ -10,9 +10,9 @@ import {
   incrementChatDeletedMessages,
   incrementChatBannedSpammers,
   updateChatLocale,
-} from "../data";
-import { generateEmbeddings } from "../ai";
-import { getLocaleMessages, type LocaleMessages } from "./messages";
+} from "../data/index.js";
+import { generateEmbeddings } from "../ai/index.js";
+import { getLocaleMessages, type LocaleMessages } from "./messages.js";
 
 /**
  * Executes direct administrative spam handling (deleting, banning, adding to KB).

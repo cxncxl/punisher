@@ -1,6 +1,6 @@
 import { FieldValue, type DocumentSnapshot } from "firebase-admin/firestore";
-import { DEFAULT_CONFIG } from "../shared/config";
-import { RecordNotFoundError } from "../shared/errors";
+import { DEFAULT_CONFIG } from "../shared/config.js";
+import { RecordNotFoundError } from "../shared/errors.js";
 import {
   db,
   getChatsCollection,
@@ -8,7 +8,7 @@ import {
   getSpamCollection,
   getConfigCollection,
   getPendingReportsCollection,
-} from "./db";
+} from "./db.js";
 import type {
   Chat,
   User,
@@ -17,7 +17,7 @@ import type {
   Config,
   PendingReport,
   PendingReportStatus,
-} from "../shared/types";
+} from "../shared/types.js";
 
 /**
  * Retrieves a Chat document by its Telegram ID.

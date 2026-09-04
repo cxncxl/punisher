@@ -1,4 +1,4 @@
-import type { Config } from "./types";
+import type { Config } from "./types.js";
 
 /**
  * The default system configuration settings.

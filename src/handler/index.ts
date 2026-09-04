@@ -1,10 +1,8 @@
-import { initializeApp } from "firebase-admin/app";
+import "./init.js";
 import { onRequest, type HttpsFunction } from "firebase-functions/v2/https";
 import { webhookCallback } from "grammy";
 import express from "express";
-import { bot } from "../telegram/bot";
-
-initializeApp();
+import { bot } from "../telegram/bot.js";
 
 const app = express();
 app.use(express.json());

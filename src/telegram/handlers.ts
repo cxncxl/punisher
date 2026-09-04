@@ -8,9 +8,9 @@ import {
   updatePendingReportStatus,
   incrementChatDeletedMessages,
   incrementChatBannedSpammers,
-} from "../data";
-import { generateEmbeddings } from "../ai";
-import { getLocaleMessages } from "./messages";
+} from "../data/index.js";
+import { generateEmbeddings } from "../ai/index.js";
+import { getLocaleMessages } from "./messages.js";
 
 /**
  * Handle when the bot status in a chat is updated (added/removed/promoted).

@@ -3,7 +3,7 @@ import {
   ChatGoogleGenerativeAI,
 } from "@langchain/google-genai";
 import { z } from "zod";
-import type { LLMAnalysisResult } from "../shared/types";
+import type { LLMAnalysisResult } from "../shared/types.js";
 
 // Define the model name constants
 const EMBEDDING_MODEL = "text-embedding-004";
