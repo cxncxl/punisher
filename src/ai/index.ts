@@ -6,7 +6,7 @@ import { z } from "zod";
 import type { LLMAnalysisResult } from "../shared/types.js";
 
 // Define the model name constants
-const EMBEDDING_MODEL = "text-embedding-004";
+const EMBEDDING_MODEL = "gemini-embedding-001";
 const CHAT_MODEL = "gemini-3.5-flash";
 
 /**
