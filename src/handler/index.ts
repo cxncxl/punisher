@@ -57,6 +57,10 @@ app.use(
 );
 
 export const punisher: HttpsFunction = onRequest(
-  { secrets: ["TG_BOT_KEY", "GEMINI_API_KEY"] },
+  {
+    secrets: ["TG_BOT_KEY", "GEMINI_API_KEY"],
+    maxInstances: 5,
+    memory: "512MiB",
+  },
   app,
 );
