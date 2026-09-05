@@ -139,6 +139,7 @@ const configConverter = {
       ...(config.llmSpamConfidenceThreshold !== undefined
         ? { llmSpamConfidenceThreshold: config.llmSpamConfidenceThreshold }
         : {}),
+      ...(config.logLevel !== undefined ? { logLevel: config.logLevel } : {}),
     };
   },
   fromFirestore(snapshot: QueryDocumentSnapshot): Config {
@@ -155,6 +156,7 @@ const configConverter = {
       llmSpamConfidenceThreshold: Number(
         data["llmSpamConfidenceThreshold"] ?? 0.75,
       ),
+      logLevel: (data["logLevel"] as Config["logLevel"]) ?? "off",
     } satisfies Config;
   },
 };
