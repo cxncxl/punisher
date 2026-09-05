@@ -17,7 +17,7 @@ import {
 } from "../data/index.js";
 import { evaluateMessage, type SpamCheckResult } from "../spam/index.js";
 import { getLocaleMessages, type LocaleMessages } from "./messages.js";
-import type { Chat, User } from "../shared/types.js";
+import type { Chat, Config, User } from "../shared/types.js";
 import { logMessage } from "../shared/logger.js";
 
 /**
@@ -331,7 +331,7 @@ async function shouldBypassSpamDetection(
   chatId: string,
   senderId: string,
   user: User,
-  config: any,
+  config: Config,
   prefix: string,
 ) {
   const isSenderAdmin = await isChatAdminOrSuperadmin(chatId, senderId);

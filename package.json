@@ -18,6 +18,7 @@
     "typescript": "^7.0.2"
   },
   "dependencies": {
+    "@google/genai": "^2.21.0",
     "@google/generative-ai": "^0.24.1",
     "@langchain/google-genai": "^2.3.0",
     "dotenv": "^17.4.2",

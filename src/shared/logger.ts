@@ -1,3 +1,4 @@
+import { logger } from "firebase-functions";
 import type { Config } from "./types.js";
 
 /**
@@ -22,5 +23,13 @@ export function logMessage(
     return;
   }
 
-  console.log(`[${level.toUpperCase()}]`, ...args);
+  const message = args
+    .map((arg) => (typeof arg === "object" ? JSON.stringify(arg) : arg))
+    .join(" ");
+
+  if (level === "debug") {
+    logger.debug(message);
+  } else {
+    logger.info(message);
+  }
 }

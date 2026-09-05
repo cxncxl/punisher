@@ -39,3 +39,15 @@ export class InternalError extends AppError {
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
+
+/** Any error related to AI invocations */
+export class AIError extends AppError {
+  /**
+   * Creates an instance of AIError.
+   */
+  constructor(message: string) {
+    super(message);
+    this.name = "AIError";
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}

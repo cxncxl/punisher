@@ -1,26 +1,14 @@
-import {
-  GoogleGenerativeAIEmbeddings,
-  ChatGoogleGenerativeAI,
-} from "@langchain/google-genai";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { GoogleGenAI } from "@google/genai";
 import { z } from "zod";
 import type { LLMAnalysisResult } from "../shared/types.js";
 import { getConfig } from "../data/index.js";
 import { logMessage } from "../shared/logger.js";
+import { AIError } from "../shared/errors.js";
 
 // Define the model name constants
 const EMBEDDING_MODEL = "gemini-embedding-001";
 const CHAT_MODEL = "gemini-3.5-flash";
-
-/**
- * Creates an instance of GoogleGenerativeAIEmbeddings using GEMINI_API_KEY.
- */
-function getEmbeddingsInstance(): GoogleGenerativeAIEmbeddings {
-  const apiKey = process.env["GEMINI_API_KEY"];
-  return new GoogleGenerativeAIEmbeddings({
-    ...(apiKey !== undefined ? { apiKey } : {}),
-    modelName: EMBEDDING_MODEL,
-  });
-}
 
 /**
  * Creates an instance of ChatGoogleGenerativeAI using GEMINI_API_KEY.
@@ -47,14 +35,37 @@ export async function generateEmbeddings(text: string): Promise<number[]> {
     "debug",
     `Generating embeddings for text of length ${text.length}...`,
   );
-  const embeddings = getEmbeddingsInstance();
-  const result = await embeddings.embedQuery(text);
-  logMessage(
-    config,
-    "debug",
-    `Embeddings generated successfully (dimensions: ${result.length})`,
-  );
-  return result;
+
+  const apiKey = process.env["GEMINI_API_KEY"];
+  const ai = new GoogleGenAI({
+    ...(apiKey !== undefined ? { apiKey } : {}),
+  });
+
+  try {
+    const response = await ai.models.embedContent({
+      model: EMBEDDING_MODEL,
+      contents: text,
+      config: {
+        outputDimensionality: 768,
+      },
+    });
+
+    const result = response.embeddings?.[0]?.values;
+    if (!result) {
+      throw new Error(
+        "Failed to generate embeddings: No embedding values returned from SDK.",
+      );
+    }
+
+    logMessage(
+      config,
+      "debug",
+      `Embeddings generated successfully (dimensions: ${result.length})`,
+    );
+    return result;
+  } catch (e) {
+    throw new AIError(`Failed to generate embeddings: ${e}`);
+  }
 }
 
 /**
@@ -107,15 +118,19 @@ IMPORTANT:
 ${text}
 ---`;
 
-  const result = await structuredModel.invoke([
-    ["system", systemPrompt],
-    ["human", userPrompt],
-  ]);
+  try {
+    const result = await structuredModel.invoke([
+      ["system", systemPrompt],
+      ["human", userPrompt],
+    ]);
 
-  logMessage(
-    config,
-    "debug",
-    `Gemini LLM analysis complete: isSpam=${result.isSpam}, confidence=${result.confidence}`,
-  );
-  return result;
+    logMessage(
+      config,
+      "debug",
+      `Gemini LLM analysis complete: isSpam=${result.isSpam}, confidence=${result.confidence}`,
+    );
+    return result;
+  } catch (e) {
+    throw new AIError(`Message analysis with LLM failed: ${e}`);
+  }
 }
