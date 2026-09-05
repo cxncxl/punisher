@@ -9,4 +9,5 @@ export const DEFAULT_CONFIG: Config = {
   spamSimilarityThreshold: 0.8,
   llmSpamConfidenceThreshold: 0.75,
   logLevel: "off",
+  sendGroupBanAnnouncement: false,
 } satisfies Config;

@@ -161,6 +161,7 @@ const configConverter = {
         data["llmSpamConfidenceThreshold"] ?? 0.75,
       ),
       logLevel: (data["logLevel"] as Config["logLevel"]) ?? "off",
+      sendGroupBanAnnouncement: Boolean(data["sendGroupBanAnnouncement"]),
     } satisfies Config;
   },
 };

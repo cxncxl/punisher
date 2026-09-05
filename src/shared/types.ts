@@ -131,6 +131,11 @@ export interface Config {
    * The active log level for the system.
    */
   logLevel?: "off" | "standard" | "debug";
+
+  /**
+   * Send group ban anouncements
+   */
+  sendGroupBanAnnouncement: boolean;
 }
 
 /**

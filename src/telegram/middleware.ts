@@ -54,7 +54,6 @@ async function handleVectorSpamMatch(
   chatId: string,
   senderId: string,
   senderName: string,
-  text: string,
   messageId: number,
   date: number,
   chatTitle: string,
@@ -127,9 +126,11 @@ async function handleVectorSpamMatch(
   await incrementChatDeletedMessages(chatId);
   await incrementChatBannedSpammers(chatId);
 
-  await ctx.reply(msgs.punishedGroup(senderName, senderId), {
-    parse_mode: "MarkdownV2",
-  });
+  if ((await getConfig()).sendGroupBanAnnouncement) {
+    await ctx.reply(msgs.punishedGroup(senderName, senderId), {
+      parse_mode: "MarkdownV2",
+    });
+  }
 }
 
 /**
@@ -244,9 +245,11 @@ async function handleHighConfidenceLLMSpam(
     console.error("Failed to delete message:", err);
   }
 
-  await ctx.reply(msgs.punishedGroup(senderName, senderId), {
-    parse_mode: "MarkdownV2",
-  });
+  if (config.sendGroupBanAnnouncement) {
+    await ctx.reply(msgs.punishedGroup(senderName, senderId), {
+      parse_mode: "MarkdownV2",
+    });
+  }
 }
 
 /**
@@ -477,7 +480,6 @@ async function handleMessageAnalysis(
       chat.id,
       sender.id,
       sender.name,
-      message.text ?? "",
       message.message_id,
       message.date,
       chat.title,
