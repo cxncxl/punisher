@@ -130,7 +130,7 @@ export async function addSpam(
   await docRef.set({
     id: docRef.id,
     text,
-    textEmbeddings: FieldValue.vector(textEmbeddings) as unknown as number[],
+    textEmbeddings,
   } satisfies Spam);
   return docRef.id;
 }
