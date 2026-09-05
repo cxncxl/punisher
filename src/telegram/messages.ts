@@ -65,6 +65,9 @@ export interface LocaleMessages {
     processed: number,
     deleted: number,
     banned: number,
+    topReporterName?: string,
+    topReporterId?: string,
+    topReporterCount?: number,
   ) => string;
   punish: () => string;
   falsePositive: () => string;
@@ -99,11 +102,25 @@ const enMessages: LocaleMessages = {
     `[${escapeMarkdown(dateStr)}]\n\n` +
     `>> ${escapeMarkdown(text)}\n`,
 
-  stats: (addedOnStr, processed, deleted, banned) =>
-    `Since ${escapeMarkdown(addedOnStr)} I've\n\n` +
-    `Processed messages: ${processed}\n` +
-    `Deleted spam messages: ${deleted}\n` +
-    `Banned spammers: ${banned}\n`,
+  stats: (
+    addedOnStr,
+    processed,
+    deleted,
+    banned,
+    topReporterName,
+    topReporterId,
+    topReporterCount,
+  ) => {
+    let base =
+      `Since ${escapeMarkdown(addedOnStr)} I've\n\n` +
+      `Processed messages: ${processed}\n` +
+      `Deleted spam messages: ${deleted}\n` +
+      `Banned spammers: ${banned}\n`;
+    if (topReporterName && topReporterId && topReporterCount !== undefined) {
+      base += `Top reporter: [${escapeMarkdown(topReporterName)}](tg://user?id=${topReporterId}) (${topReporterCount})\n`;
+    }
+    return base;
+  },
 
   punish: () => "Punish",
   falsePositive: () => "Not spam",
@@ -142,11 +159,25 @@ const uaMessages: LocaleMessages = {
     `[${escapeMarkdown(dateStr)}]\n\n` +
     `>> ${escapeMarkdown(text)}\n`,
 
-  stats: (addedOnStr, processed, deleted, banned) =>
-    `З ${escapeMarkdown(addedOnStr)} я\n\n` +
-    `Проаналізував повідомлень: ${processed}\n` +
-    `Видалив повідомлень зі спамом: ${deleted}\n` +
-    `Забанив спамерів: ${banned}\n`,
+  stats: (
+    addedOnStr,
+    processed,
+    deleted,
+    banned,
+    topReporterName,
+    topReporterId,
+    topReporterCount,
+  ) => {
+    let base =
+      `З ${escapeMarkdown(addedOnStr)} я\n\n` +
+      `Проаналізував повідомлень: ${processed}\n` +
+      `Видалив повідомлень зі спамом: ${deleted}\n` +
+      `Забанив спамерів: ${banned}\n`;
+    if (topReporterName && topReporterId && topReporterCount !== undefined) {
+      base += `Найактивніший репортер: [${escapeMarkdown(topReporterName)}](tg://user?id=${topReporterId}) (${topReporterCount})\n`;
+    }
+    return base;
+  },
 
   punish: () => "Покарати",
   falsePositive: () => "Не спам",

@@ -76,6 +76,11 @@ export interface User {
    * The role of the user within this chat.
    */
   role: UserRole;
+
+  /**
+   * The total number of confirmed spam reports made by this user in this chat.
+   */
+  spamMessagesReported?: number;
 }
 
 /**
@@ -176,6 +181,11 @@ export interface PendingReport {
    * The current status of the report.
    */
   status: PendingReportStatus;
+
+  /**
+   * The Telegram user ID of the user who reported this spam.
+   */
+  reporterId?: string;
 }
 
 /**

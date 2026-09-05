@@ -80,6 +80,9 @@ const userConverter = {
       joinedAt: user.joinedAt,
       messagesCount: user.messagesCount,
       role: user.role,
+      ...(user.spamMessagesReported !== undefined
+        ? { spamMessagesReported: user.spamMessagesReported }
+        : {}),
     };
   },
   fromFirestore(snapshot: QueryDocumentSnapshot): User {
@@ -98,6 +101,7 @@ const userConverter = {
           : new Date(String(joinedAtVal ?? "")),
       messagesCount: Number(data["messagesCount"] ?? 0),
       role: finalRole,
+      spamMessagesReported: Number(data["spamMessagesReported"] ?? 0),
     } satisfies User;
   },
 };
@@ -174,6 +178,9 @@ const pendingReportConverter = {
       text: report.text,
       createdAt: report.createdAt,
       status: report.status,
+      ...(report.reporterId !== undefined
+        ? { reporterId: report.reporterId }
+        : {}),
     };
   },
   fromFirestore(snapshot: QueryDocumentSnapshot): PendingReport {
@@ -197,6 +204,9 @@ const pendingReportConverter = {
           ? createdAtVal.toDate()
           : new Date(String(createdAtVal ?? "")),
       status: finalStatus,
+      ...(data["reporterId"] !== undefined
+        ? { reporterId: String(data["reporterId"]) }
+        : {}),
     } satisfies PendingReport;
   },
 };

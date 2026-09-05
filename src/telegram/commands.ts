@@ -11,6 +11,7 @@ import {
   incrementChatBannedSpammers,
   updateChatLocale,
   getConfig,
+  getTopReporter,
 } from "../data/index.js";
 import { generateEmbeddings } from "../ai/index.js";
 import { getLocaleMessages, type LocaleMessages } from "./messages.js";
@@ -80,6 +81,7 @@ async function registerUserSpamReport(
   msgs: LocaleMessages,
   repliedName: string,
   repliedUserId: string,
+  reporterId: string,
 ): Promise<void> {
   const reportId = await createPendingReport({
     chatId,
@@ -88,6 +90,7 @@ async function registerUserSpamReport(
     senderName: repliedName,
     text,
     status: "pending",
+    reporterId,
   });
 
   const dateStr = new Date(replyTo.date * 1000).toLocaleString();
@@ -281,6 +284,7 @@ async function handleSpam(ctx: CommandContext<any>): Promise<void> {
       msgs,
       repliedName,
       repliedUserId,
+      senderId,
     );
   }
 }
@@ -303,12 +307,42 @@ async function handleStats(ctx: CommandContext<any>): Promise<void> {
   const locale = chat?.locale ?? "ua";
   const msgs = getLocaleMessages(locale);
 
+  const topReporter = await getTopReporter(chatId);
+  let topReporterName: string | undefined;
+  let topReporterId: string | undefined;
+  let topReporterCount: number | undefined;
+
+  if (topReporter) {
+    topReporterId = topReporter.id;
+    topReporterCount = topReporter.spamMessagesReported;
+    topReporterName = topReporter.name;
+    try {
+      const member = await ctx.api.getChatMember(
+        ctx.chat.id,
+        Number(topReporter.id),
+      );
+      const u = member.user;
+      const firstName = u.first_name;
+      const lastName = u.last_name !== undefined ? ` ${u.last_name}` : "";
+      topReporterName = `${firstName}${lastName}`.trim();
+    } catch (err) {
+      logMessage(
+        config,
+        "debug",
+        `Failed to resolve top reporter name via Telegram API: ${err}`,
+      );
+    }
+  }
+
   const addedOnStr = (chat?.createdAt ?? new Date()).toLocaleDateString();
   const statsMsg = msgs.stats(
     addedOnStr,
     chat?.processedMessages ?? 0,
     chat?.deletedMessages ?? 0,
     chat?.bannedSpammers ?? 0,
+    topReporterName,
+    topReporterId,
+    topReporterCount,
   );
 
   await ctx.reply(statsMsg, {

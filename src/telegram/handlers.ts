@@ -8,6 +8,7 @@ import {
   updatePendingReportStatus,
   incrementChatDeletedMessages,
   incrementChatBannedSpammers,
+  incrementUserSpamReportedCount,
 } from "../data/index.js";
 import { generateEmbeddings } from "../ai/index.js";
 import { getLocaleMessages } from "./messages.js";
@@ -107,6 +108,15 @@ async function handleCallbackQuery(ctx: Context): Promise<void> {
     await updatePendingReportStatus(reportId, "punished");
     await incrementChatDeletedMessages(report.chatId);
     await incrementChatBannedSpammers(report.chatId);
+
+    // Increment reporter count if exists
+    if (report.reporterId) {
+      try {
+        await incrementUserSpamReportedCount(report.chatId, report.reporterId);
+      } catch (err) {
+        console.error("Failed to increment user spam reported count:", err);
+      }
+    }
 
     // Inform the admin who clicked
     await ctx.answerCallbackQuery({ text: "Spammer punished!" });

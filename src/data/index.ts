@@ -98,6 +98,57 @@ export async function incrementUserMessageCount(
 }
 
 /**
+ * Increments the number of spam messages reported by a user in a specific chat.
+ */
+export async function incrementUserSpamReportedCount(
+  chatId: string,
+  userId: string,
+): Promise<void> {
+  const rawUserRef = db
+    .collection("chats")
+    .doc(chatId)
+    .collection("users")
+    .doc(userId);
+
+  await rawUserRef.set(
+    {
+      name: "Unknown",
+      joinedAt: new Date(),
+      role: "user",
+      messagesCount: 0,
+      spamMessagesReported: FieldValue.increment(1),
+    },
+    { merge: true },
+  );
+}
+
+/**
+ * Retrieves the user who reported the most spam messages in a specific chat.
+ */
+export async function getTopReporter(chatId: string): Promise<User | null> {
+  const snapshot = await getUsersCollection(chatId)
+    .orderBy("spamMessagesReported", "desc")
+    .limit(1)
+    .get();
+
+  if (snapshot.empty) {
+    return null;
+  }
+
+  const doc = snapshot.docs[0];
+  if (doc === undefined) {
+    return null;
+  }
+
+  const user = doc.data();
+  if (!user.spamMessagesReported || user.spamMessagesReported <= 0) {
+    return null;
+  }
+
+  return user;
+}
+
+/**
  * Promotes a user to an admin role in a specific chat.
  *
  * @throws {RecordNotFoundError} If the user does not exist in the chat.
