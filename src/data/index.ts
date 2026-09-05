@@ -186,6 +186,7 @@ export async function addSpam(
   return docRef.id;
 }
 
+const distanceResultField = "__distance__";
 /**
  * Searches for a highly similar spam message in the spam collection.
  */
@@ -200,6 +201,7 @@ export async function searchSpam(
         vectorField: "textEmbeddings",
         queryVector: textEmbeddings,
         distanceMeasure: "COSINE",
+        distanceResultField,
         limit: 1,
       })
       .get();
@@ -209,16 +211,18 @@ export async function searchSpam(
     }
 
     const doc = snap.docs[0];
-    if (doc === undefined) {
+    if (!doc) {
       return null;
     }
 
-    const distance = Number(doc.get("__distance__") ?? 1);
+    const docData = doc.data() as Spam & { [distanceResultField]: number };
+    const distance = docData[distanceResultField];
     const similarity = 1 - distance;
 
     if (similarity >= similarityThreshold) {
       return doc.data();
     }
+
     return null;
   } catch (err) {
     console.error("Vector search failed:", err);
