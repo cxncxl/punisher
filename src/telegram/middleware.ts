@@ -85,13 +85,41 @@ async function handleVectorSpamMatch(
   );
 
   const admins = await getChatAdmins(chatId);
+  const config = await getConfig();
+  logMessage(
+    config,
+    "standard",
+    `[Admin Notification] Found ${admins.length} registered admins in database for chat ${chatId}`,
+  );
+  if (admins.length === 0) {
+    logMessage(
+      config,
+      "standard",
+      `[Admin Notification] Hint: Admin users must send at least one message in the chat to be registered in the database, and they must start a DM with the bot to receive direct notifications.`,
+    );
+  }
+
   for (const admin of admins) {
     try {
+      logMessage(
+        config,
+        "standard",
+        `[Admin Notification] Attempting to send DM notification to admin ${admin.id} (${admin.name})`,
+      );
       await ctx.api.sendMessage(Number(admin.id), adminMsg, {
         parse_mode: "MarkdownV2",
       });
-    } catch {
-      // Ignore DM sending failures
+      logMessage(
+        config,
+        "standard",
+        `[Admin Notification] DM notification sent successfully to admin ${admin.id} (${admin.name})`,
+      );
+    } catch (err: any) {
+      logMessage(
+        config,
+        "standard",
+        `[Admin Notification] Failed to send DM notification to admin ${admin.id} (${admin.name}): ${err?.message || err}`,
+      );
     }
   }
 
@@ -151,6 +179,20 @@ async function handleHighConfidenceLLMSpam(
   });
 
   const admins = await getChatAdmins(chatId);
+  const config = await getConfig();
+  logMessage(
+    config,
+    "standard",
+    `[Admin Notification] Found ${admins.length} registered admins in database for chat ${chatId}`,
+  );
+  if (admins.length === 0) {
+    logMessage(
+      config,
+      "standard",
+      `[Admin Notification] Hint: Admin users must send at least one message in the chat to be registered in the database, and they must start a DM with the bot to receive direct notifications.`,
+    );
+  }
+
   const inlineKeyboard = [
     [
       ...(isBan
@@ -170,12 +212,26 @@ async function handleHighConfidenceLLMSpam(
 
   for (const admin of admins) {
     try {
+      logMessage(
+        config,
+        "standard",
+        `[Admin Notification] Attempting to send DM notification to admin ${admin.id} (${admin.name})`,
+      );
       await ctx.api.sendMessage(Number(admin.id), adminMsg, {
         reply_markup: { inline_keyboard: inlineKeyboard },
         parse_mode: "MarkdownV2",
       });
-    } catch {
-      // Ignore DM sending failures
+      logMessage(
+        config,
+        "standard",
+        `[Admin Notification] DM notification sent successfully to admin ${admin.id} (${admin.name})`,
+      );
+    } catch (err: any) {
+      logMessage(
+        config,
+        "standard",
+        `[Admin Notification] Failed to send DM notification to admin ${admin.id} (${admin.name}): ${err?.message || err}`,
+      );
     }
   }
 
@@ -232,14 +288,42 @@ async function handleLowConfidenceLLMSpam(
   ];
 
   const admins = await getChatAdmins(chatId);
+  const config = await getConfig();
+  logMessage(
+    config,
+    "standard",
+    `[Admin Notification] Found ${admins.length} registered admins in database for chat ${chatId}`,
+  );
+  if (admins.length === 0) {
+    logMessage(
+      config,
+      "standard",
+      `[Admin Notification] Hint: Admin users must send at least one message in the chat to be registered in the database, and they must start a DM with the bot to receive direct notifications.`,
+    );
+  }
+
   for (const admin of admins) {
     try {
+      logMessage(
+        config,
+        "standard",
+        `[Admin Notification] Attempting to send DM notification to admin ${admin.id} (${admin.name})`,
+      );
       await ctx.api.sendMessage(Number(admin.id), reportMsg, {
         reply_markup: { inline_keyboard: inlineKeyboard },
         parse_mode: "MarkdownV2",
       });
-    } catch {
-      // Ignore DM sending failures
+      logMessage(
+        config,
+        "standard",
+        `[Admin Notification] DM notification sent successfully to admin ${admin.id} (${admin.name})`,
+      );
+    } catch (err: any) {
+      logMessage(
+        config,
+        "standard",
+        `[Admin Notification] Failed to send DM notification to admin ${admin.id} (${admin.name}): ${err?.message || err}`,
+      );
     }
   }
 }
