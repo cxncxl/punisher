@@ -60,28 +60,12 @@ async function handleVectorSpamMatch(
   chatTitle: string,
   msgs: LocaleMessages,
 ): Promise<void> {
-  try {
-    await ctx.api.deleteMessage(ctx.chat?.id ?? 0, messageId);
-  } catch (err) {
-    console.error("Failed to delete message:", err);
-  }
-
-  try {
-    await ctx.banChatMember(Number(senderId));
-  } catch (err) {
-    console.error("Failed to ban chat member:", err);
-  }
-
-  await incrementChatDeletedMessages(chatId);
-  await incrementChatBannedSpammers(chatId);
-
   const dateStr = new Date(date * 1000).toLocaleString();
   const adminMsg = msgs.punishedAndBanned(
     chatTitle,
     senderName,
     senderId,
     dateStr,
-    text,
   );
 
   const admins = await getChatAdmins(chatId);
@@ -100,6 +84,11 @@ async function handleVectorSpamMatch(
   }
 
   for (const admin of admins) {
+    try {
+      await ctx.api.forwardMessage(Number(admin.id), Number(chatId), messageId);
+    } catch (err) {
+      console.error("Failed to forward message to admin:", err);
+    }
     try {
       logMessage(
         config,
@@ -123,6 +112,21 @@ async function handleVectorSpamMatch(
     }
   }
 
+  try {
+    await ctx.api.deleteMessage(ctx.chat?.id ?? 0, messageId);
+  } catch (err) {
+    console.error("Failed to delete message:", err);
+  }
+
+  try {
+    await ctx.banChatMember(Number(senderId));
+  } catch (err) {
+    console.error("Failed to ban chat member:", err);
+  }
+
+  await incrementChatDeletedMessages(chatId);
+  await incrementChatBannedSpammers(chatId);
+
   await ctx.reply(msgs.punishedGroup(senderName, senderId), {
     parse_mode: "MarkdownV2",
   });
@@ -144,12 +148,6 @@ async function handleHighConfidenceLLMSpam(
   confidence: number,
   textEmbeddings: number[],
 ): Promise<void> {
-  try {
-    await ctx.api.deleteMessage(ctx.chat?.id ?? 0, messageId);
-  } catch (err) {
-    console.error("Failed to delete message:", err);
-  }
-
   await addSpam(text, textEmbeddings);
   await incrementChatDeletedMessages(chatId);
   await incrementChatProcessedMessages(chatId);
@@ -166,8 +164,8 @@ async function handleHighConfidenceLLMSpam(
 
   const dateStr = new Date(date * 1000).toLocaleString();
   const adminMsg = isBan
-    ? msgs.punishedAndBanned(chatTitle, senderName, senderId, dateStr, text)
-    : msgs.punished(chatTitle, senderName, senderId, dateStr, text);
+    ? msgs.punishedAndBanned(chatTitle, senderName, senderId, dateStr)
+    : msgs.punished(chatTitle, senderName, senderId, dateStr);
 
   const reportId = await createPendingReport({
     chatId,
@@ -212,6 +210,11 @@ async function handleHighConfidenceLLMSpam(
 
   for (const admin of admins) {
     try {
+      await ctx.api.forwardMessage(Number(admin.id), Number(chatId), messageId);
+    } catch (err) {
+      console.error("Failed to forward message to admin:", err);
+    }
+    try {
       logMessage(
         config,
         "standard",
@@ -233,6 +236,12 @@ async function handleHighConfidenceLLMSpam(
         `[Admin Notification] Failed to send DM notification to admin ${admin.id} (${admin.name}): ${err?.message || err}`,
       );
     }
+  }
+
+  try {
+    await ctx.api.deleteMessage(ctx.chat?.id ?? 0, messageId);
+  } catch (err) {
+    console.error("Failed to delete message:", err);
   }
 
   await ctx.reply(msgs.punishedGroup(senderName, senderId), {
@@ -266,13 +275,7 @@ async function handleLowConfidenceLLMSpam(
   await incrementChatProcessedMessages(chatId);
 
   const dateStr = new Date(date * 1000).toLocaleString();
-  const reportMsg = msgs.possibleSpam(
-    chatTitle,
-    senderName,
-    senderId,
-    dateStr,
-    text,
-  );
+  const reportMsg = msgs.possibleSpam(chatTitle, senderName, senderId, dateStr);
 
   const inlineKeyboard = [
     [
@@ -303,6 +306,11 @@ async function handleLowConfidenceLLMSpam(
   }
 
   for (const admin of admins) {
+    try {
+      await ctx.api.forwardMessage(Number(admin.id), Number(chatId), messageId);
+    } catch (err) {
+      console.error("Failed to forward message to admin:", err);
+    }
     try {
       logMessage(
         config,

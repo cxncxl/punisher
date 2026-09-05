@@ -48,11 +48,19 @@ async function executeAdminSpamPunish(
     repliedName,
     repliedUserId,
     dateStr,
-    text,
   );
 
   const admins = await getChatAdmins(chatId);
   for (const admin of admins) {
+    try {
+      await ctx.api.forwardMessage(
+        Number(admin.id),
+        Number(chatId),
+        Number(replyTo.message_id),
+      );
+    } catch (err) {
+      console.error("Failed to forward message to admin:", err);
+    }
     try {
       await ctx.api.sendMessage(Number(admin.id), adminMsg, {
         parse_mode: "MarkdownV2",
@@ -99,7 +107,6 @@ async function registerUserSpamReport(
     repliedName,
     repliedUserId,
     dateStr,
-    text,
   );
 
   const inlineKeyboard = [
@@ -117,6 +124,15 @@ async function registerUserSpamReport(
 
   const admins = await getChatAdmins(chatId);
   for (const admin of admins) {
+    try {
+      await ctx.api.forwardMessage(
+        Number(admin.id),
+        Number(chatId),
+        Number(replyTo.message_id),
+      );
+    } catch (err) {
+      console.error("Failed to forward message to admin:", err);
+    }
     try {
       await ctx.api.sendMessage(Number(admin.id), reportMsg, {
         reply_markup: { inline_keyboard: inlineKeyboard },

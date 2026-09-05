@@ -43,14 +43,12 @@ export interface LocaleMessages {
     senderName: string,
     senderId: string,
     dateStr: string,
-    text: string,
   ) => string;
   punished: (
     chatName: string,
     senderName: string,
     senderId: string,
     dateStr: string,
-    text: string,
   ) => string;
   punishedGroup: (senderName: string, senderId: string) => string;
   punishedAndBanned: (
@@ -58,7 +56,6 @@ export interface LocaleMessages {
     senderName: string,
     senderId: string,
     dateStr: string,
-    text: string,
   ) => string;
   stats: (
     addedOnStr: string,
@@ -77,30 +74,27 @@ export interface LocaleMessages {
 }
 
 const enMessages: LocaleMessages = {
-  possibleSpam: (chatName, senderName, senderId, dateStr, text) =>
+  possibleSpam: (chatName, senderName, senderId, dateStr) =>
     `*Possible spam message:*\n` +
     `In chat ${escapeMarkdown(chatName)}\n\n` +
     `[${escapeMarkdown(senderName)}](tg://user?id=${senderId})\n` +
-    `[${escapeMarkdown(dateStr)}]\n\n` +
-    `>> ${escapeMarkdown(text)}\n`,
+    `[${escapeMarkdown(dateStr)}]\n`,
 
-  punished: (chatName, senderName, senderId, dateStr, text) =>
+  punished: (chatName, senderName, senderId, dateStr) =>
     `*Deleted message:*\n` +
     `In chat ${escapeMarkdown(chatName)}\n\n` +
     `[${escapeMarkdown(senderName)}](tg://user?id=${senderId})\n` +
-    `[${escapeMarkdown(dateStr)}]\n\n` +
-    `>> ${escapeMarkdown(text)}\n`,
+    `[${escapeMarkdown(dateStr)}]\n`,
 
   punishedGroup: (senderName, senderId) =>
     `[${escapeMarkdown(senderName)}](tg://user?id=${senderId}), ` +
-    `your message has been deleted because it looked like spam.`,
+    `your message has been deleted because it looked like spam\\.`,
 
-  punishedAndBanned: (chatName, senderName, senderId, dateStr, text) =>
+  punishedAndBanned: (chatName, senderName, senderId, dateStr) =>
     `*Deleted message and banned spammer:*\n` +
     `In chat ${escapeMarkdown(chatName)}\n\n` +
     `[${escapeMarkdown(senderName)}](tg://user?id=${senderId})\n` +
-    `[${escapeMarkdown(dateStr)}]\n\n` +
-    `>> ${escapeMarkdown(text)}\n`,
+    `[${escapeMarkdown(dateStr)}]\n`,
 
   stats: (
     addedOnStr,
@@ -127,37 +121,34 @@ const enMessages: LocaleMessages = {
   actionSuccess: () => "+",
   ban: () => "Ban user",
   noPremium: (deleted) =>
-    `You don't have premium subscription active. ` +
-    `I've already deleted ${deleted} spam messages in this chat. ` +
+    `You don't have premium subscription active\\. ` +
+    `I've already deleted ${deleted} spam messages in this chat\\. ` +
     `If you want to continue using me, please contact support for ` +
-    `purchasing premium.`,
+    `purchasing premium\\.`,
 };
 
 const uaMessages: LocaleMessages = {
-  possibleSpam: (chatName, senderName, senderId, dateStr, text) =>
+  possibleSpam: (chatName, senderName, senderId, dateStr) =>
     `*Повідомлення виглядає як спам:*\n` +
     `у чаті ${escapeMarkdown(chatName)}\n\n` +
     `[${escapeMarkdown(senderName)}](tg://user?id=${senderId})\n` +
-    `[${escapeMarkdown(dateStr)}]\n\n` +
-    `>> ${escapeMarkdown(text)}\n`,
+    `[${escapeMarkdown(dateStr)}]\n`,
 
-  punished: (chatName, senderName, senderId, dateStr, text) =>
+  punished: (chatName, senderName, senderId, dateStr) =>
     `*Видалив повідомлення:*\n` +
     `у чаті ${escapeMarkdown(chatName)}\n\n` +
     `[${escapeMarkdown(senderName)}](tg://user?id=${senderId})\n` +
-    `[${escapeMarkdown(dateStr)}]\n\n` +
-    `>> ${escapeMarkdown(text)}\n`,
+    `[${escapeMarkdown(dateStr)}]\n`,
 
   punishedGroup: (senderName, senderId) =>
     `[${escapeMarkdown(senderName)}](tg://user?id=${senderId}), ` +
-    `ваше повідомлення було видалено, оскільки виглядало як спам.`,
+    `ваше повідомлення було видалено, оскільки виглядало як спам\\.`,
 
-  punishedAndBanned: (chatName, senderName, senderId, dateStr, text) =>
+  punishedAndBanned: (chatName, senderName, senderId, dateStr) =>
     `*Видалив повідомлення і заблокував спамера:*\n` +
     `У чаті ${escapeMarkdown(chatName)}\n\n` +
     `[${escapeMarkdown(senderName)}](tg://user?id=${senderId})\n` +
-    `[${escapeMarkdown(dateStr)}]\n\n` +
-    `>> ${escapeMarkdown(text)}\n`,
+    `[${escapeMarkdown(dateStr)}]\n`,
 
   stats: (
     addedOnStr,
@@ -184,10 +175,10 @@ const uaMessages: LocaleMessages = {
   actionSuccess: () => "+",
   ban: () => "Забанити",
   noPremium: (deleted) =>
-    `В цьому чаті неактивний преміум. Наразі я видалив ${deleted} ` +
-    `повідомлень зі спамом. Якщо ви і надалі бажаєте користуватися ` +
+    `В цьому чаті неактивний преміум\\. Наразі я видалив ${deleted} ` +
+    `повідомлень зі спамом\\. Якщо ви і надалі бажаєте користуватися ` +
     `моїми послугами, зверніться в підтримку за контактами в мене в біо, ` +
-    `щоб купити преміум (насправді зовсім не дорого).`,
+    `щоб купити преміум \\(насправді зовсім не дорого\\)\\.`,
 };
 
 /**
