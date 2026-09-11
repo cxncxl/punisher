@@ -149,12 +149,9 @@ async function handleHighConfidenceLLMSpam(
   confidence: number,
   textEmbeddings: number[],
 ): Promise<void> {
-  await addSpam(text, textEmbeddings);
-  await incrementChatDeletedMessages(chatId);
-  await incrementChatProcessedMessages(chatId);
-
   const isBan = confidence === 1.0;
   if (isBan) {
+    await addSpam(text, textEmbeddings);
     try {
       await ctx.banChatMember(Number(senderId));
     } catch (err) {
@@ -162,6 +159,9 @@ async function handleHighConfidenceLLMSpam(
     }
     await incrementChatBannedSpammers(chatId);
   }
+
+  await incrementChatDeletedMessages(chatId);
+  await incrementChatProcessedMessages(chatId);
 
   const dateStr = new Date(date * 1000).toLocaleString();
   const adminMsg = isBan
@@ -174,7 +174,7 @@ async function handleHighConfidenceLLMSpam(
     senderId,
     senderName,
     text,
-    status: isBan ? "punished" : "ignored",
+    status: "pending",
   });
 
   const admins = await getChatAdmins(chatId);
