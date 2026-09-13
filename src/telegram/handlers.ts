@@ -9,6 +9,7 @@ import {
   incrementChatDeletedMessages,
   incrementChatBannedSpammers,
   incrementUserSpamReportedCount,
+  getConfig,
 } from "../data/index.js";
 import { generateEmbeddings } from "../ai/index.js";
 import { getLocaleMessages } from "./messages.js";
@@ -122,14 +123,16 @@ async function handleCallbackQuery(ctx: Context): Promise<void> {
     await ctx.answerCallbackQuery({ text: "Spammer punished!" });
 
     // Send group chat notification about punishment
-    try {
-      await ctx.api.sendMessage(
-        Number(report.chatId),
-        msgs.punishedGroup(report.senderName, report.senderId),
-        { parse_mode: "MarkdownV2" },
-      );
-    } catch (err) {
-      console.error("Failed to send group notification:", err);
+    if ((await getConfig()).sendGroupBanAnnouncement) {
+      try {
+        await ctx.api.sendMessage(
+          Number(report.chatId),
+          msgs.punishedGroup(report.senderName, report.senderId),
+          { parse_mode: "MarkdownV2" },
+        );
+      } catch (err) {
+        console.error("Failed to send group notification:", err);
+      }
     }
   } else if (action === "ignore") {
     await updatePendingReportStatus(reportId, "ignored");
