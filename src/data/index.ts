@@ -235,7 +235,10 @@ export async function searchSpam(
  */
 export async function getConfig(): Promise<Config> {
   const doc = await getConfigCollection().doc("default").get();
-  return parseDocumentData(doc) ?? DEFAULT_CONFIG;
+  return {
+    ...parseDocumentData(doc),
+    ...DEFAULT_CONFIG,
+  };
 }
 
 /**
