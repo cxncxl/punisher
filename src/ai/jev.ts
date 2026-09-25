@@ -48,7 +48,10 @@ async function queryJev(instanceUrl: string, text: string, config: Config) {
 
     if (!res.ok) {
       throw new InternalError(
-        "JEV returned non-200 status code: " + res.status,
+        "JEV returned non-200 status code: " +
+          res.status +
+          " : " +
+          (await res.text()),
       );
     }
 
