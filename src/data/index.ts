@@ -186,7 +186,7 @@ export async function addSpam(
   return docRef.id;
 }
 
-const distanceResultField = "__distance__";
+const distanceResultField = "vector_distance";
 /**
  * Searches for a highly similar spam message in the spam collection.
  */
