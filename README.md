@@ -101,3 +101,16 @@ curl -X POST "https://api.telegram.org/bot<TG_BOT_KEY>/setWebhook" \
 - `/stats`: Generates chat statistics (processed posts, blocks, deletions).
 - `/ua`: Configures chat language to Ukrainian.
 - `/en`: Configures chat language to English.
+
+---
+
+# AI Setup
+
+Currently two providers are supported: 
+
+1. Gemini over langchain: just provide API key as Firebase secret named `GEMINI_API_KEY`
+2. Self-hosted Jev: see [this cool thing](https://github.com/taeold/djev-run) for
+  setup instructions, set `JEV_CLOUD_RUN_URL` to the cloud run instance URL
+
+Select between providers by setting `AI_PROVIDER` to either `gemini` or `jev`.
+Gemini is the default.
