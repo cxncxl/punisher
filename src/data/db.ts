@@ -12,7 +12,7 @@ import type {
   Config,
   PendingReport,
   PendingReportStatus,
-} from "../shared/types";
+} from "../shared/types.js";
 
 /**
  * Shared Firestore database client instance.

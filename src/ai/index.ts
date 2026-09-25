@@ -1,6 +1,6 @@
-import type { LLMAnalysisResult } from "../shared/types";
-import * as gemini from "./gemini";
-import * as jev from "./jev";
+import type { LLMAnalysisResult } from "../shared/types.js";
+import * as gemini from "./gemini.js";
+import * as jev from "./jev.js";
 
 export interface AIService {
   /** generates embeddings for the given text */

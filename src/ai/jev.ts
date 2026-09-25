@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { getConfig } from "../data";
-import { InternalError } from "../shared/errors";
-import { logMessage } from "../shared/logger";
-import type { Config, LLMAnalysisResult } from "../shared/types";
-import { spamAnalysisSystemPrompt } from "./prompts";
+import { getConfig } from "../data/index.js";
+import { InternalError } from "../shared/errors.js";
+import { logMessage } from "../shared/logger.js";
+import type { Config, LLMAnalysisResult } from "../shared/types.js";
+import { spamAnalysisSystemPrompt } from "./prompts/index.js";
 
 export async function analyzeMessageWithLLM(
   text: string,
