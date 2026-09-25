@@ -13,7 +13,7 @@ import {
   getConfig,
   getTopReporter,
 } from "../data/index.js";
-import { generateEmbeddings } from "../ai/index.js";
+import { getAIService } from "../ai/index.js";
 import { getLocaleMessages, type LocaleMessages } from "./messages.js";
 import { logMessage } from "../shared/logger.js";
 
@@ -36,7 +36,7 @@ async function executeAdminSpamPunish(
     console.error("Failed to ban chat member:", err);
   }
 
-  const embeddings = await generateEmbeddings(text);
+  const embeddings = await getAIService().generateEmbeddings(text);
   await addSpam(text, embeddings);
 
   await incrementChatDeletedMessages(chatId);

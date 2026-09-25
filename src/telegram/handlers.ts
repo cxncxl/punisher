@@ -11,7 +11,7 @@ import {
   incrementUserSpamReportedCount,
   getConfig,
 } from "../data/index.js";
-import { generateEmbeddings } from "../ai/index.js";
+import { getAIService } from "../ai/index.js";
 import { getLocaleMessages } from "./messages.js";
 
 /**
@@ -102,7 +102,7 @@ async function handleCallbackQuery(ctx: Context): Promise<void> {
     }
 
     // Generate embeddings and store text in spam KB
-    const embeddings = await generateEmbeddings(report.text);
+    const embeddings = await getAIService().generateEmbeddings(report.text);
     await addSpam(report.text, embeddings);
 
     // Update state and statistics

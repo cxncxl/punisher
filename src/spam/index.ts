@@ -1,5 +1,5 @@
 import { getConfig, searchSpam } from "../data/index.js";
-import { generateEmbeddings, analyzeMessageWithLLM } from "../ai/index.js";
+import { getAIService } from "../ai/index.js";
 import { logMessage } from "../shared/logger.js";
 
 /**
@@ -55,7 +55,7 @@ export async function evaluateMessage(
     : "";
 
   logMessage(config, "debug", `${prefix}checking against vector search...`);
-  const textEmbeddings = await generateEmbeddings(text);
+  const textEmbeddings = await getAIService().generateEmbeddings(text);
 
   const isSimilar = await similarToKnownSpamMessages(textEmbeddings, config);
   logMessage(config, "debug", `${prefix}vector search result: ${isSimilar}`);
@@ -101,7 +101,7 @@ async function validateMessageWithLlm(
   text: string,
   textEmbeddings: number[],
 ): Promise<SpamCheckResult | undefined> {
-  const analysis = await analyzeMessageWithLLM(text);
+  const analysis = await getAIService().analyzeMessageWithLLM(text);
 
   if (analysis.isSpam) {
     return {
