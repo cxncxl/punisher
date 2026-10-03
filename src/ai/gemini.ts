@@ -23,6 +23,10 @@ function getChatModelInstance(): ChatGoogleGenerativeAI {
     ...(apiKey !== undefined ? { apiKey } : {}),
     model: CHAT_MODEL,
     temperature: 0,
+    thinkingConfig: {
+      thinkingLevel: "LOW",
+      thinkingBudget: 1,
+    },
   });
 }
 
