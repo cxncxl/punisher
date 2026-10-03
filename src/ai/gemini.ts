@@ -25,7 +25,6 @@ function getChatModelInstance(): ChatGoogleGenerativeAI {
     temperature: 0,
     thinkingConfig: {
       thinkingLevel: "LOW",
-      thinkingBudget: 1,
     },
   });
 }
