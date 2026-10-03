@@ -12,7 +12,7 @@ import {
 
 // Define the model name constants
 const EMBEDDING_MODEL = "gemini-embedding-001";
-const CHAT_MODEL = "gemini-3.5-flash";
+const CHAT_MODEL = "gemini-3.5-flash-lite";
 
 /**
  * Creates an instance of ChatGoogleGenerativeAI using GEMINI_API_KEY.
