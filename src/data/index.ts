@@ -18,6 +18,7 @@ import type {
   PendingReport,
   PendingReportStatus,
 } from "../shared/types.js";
+import { logMessage } from "../shared/logger.js";
 
 /**
  * Retrieves a Chat document by its Telegram ID.
@@ -218,6 +219,12 @@ export async function searchSpam(
     const docData = doc.data() as Spam & { [distanceResultField]: number };
     const distance = docData[distanceResultField];
     const similarity = 1 - distance;
+
+    logMessage(
+      await getConfig(),
+      "debug",
+      `Found a similar spam message with similarity ${similarity}: ${JSON.stringify(docData)}`,
+    );
 
     if (similarity >= similarityThreshold) {
       return doc.data();
