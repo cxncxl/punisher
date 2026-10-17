@@ -216,14 +216,14 @@ export async function searchSpam(
       return null;
     }
 
-    const docData = doc.data() as Spam & { [distanceResultField]: number };
-    const distance = docData[distanceResultField];
+    const distance = doc.get(distanceResultField);
+
     const similarity = 1 - distance;
 
     logMessage(
       await getConfig(),
       "standard",
-      `Found a similar spam message with similarity ${similarity}: ${JSON.stringify(docData)}`,
+      `Found a similar spam message with similarity ${similarity}`,
     );
 
     if (similarity >= similarityThreshold) {
