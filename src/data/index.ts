@@ -222,7 +222,7 @@ export async function searchSpam(
 
     logMessage(
       await getConfig(),
-      "debug",
+      "standard",
       `Found a similar spam message with similarity ${similarity}: ${JSON.stringify(docData)}`,
     );
 
