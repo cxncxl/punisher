@@ -58,7 +58,7 @@ export async function evaluateMessage(
   const textEmbeddings = await getAIService().generateEmbeddings(text);
 
   const isSimilar = await similarToKnownSpamMessages(textEmbeddings, config);
-  logMessage(config, "debug", `${prefix}vector search result: ${isSimilar}`);
+  logMessage(config, "standard", `${prefix}vector search result: ${isSimilar}`);
 
   if (isSimilar) {
     return { type: "vector_match" };
@@ -85,16 +85,11 @@ async function similarToKnownSpamMessages(
     spamSimilarityThreshold: number;
   },
 ) {
-  const matchedSpam = await searchSpam(
+  const searchResult = await searchSpam(
     textEmbeddings,
     config.spamSimilarityThreshold,
   );
-
-  if (matchedSpam) {
-    return true;
-  }
-
-  return false;
+  return searchResult !== null;
 }
 
 async function validateMessageWithLlm(

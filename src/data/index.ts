@@ -232,7 +232,7 @@ export async function searchSpam(
 
     return null;
   } catch (err) {
-    console.error("Vector search failed:", err);
+    logMessage(await getConfig(), "standard", "Vector search failed:", err);
     return null;
   }
 }
